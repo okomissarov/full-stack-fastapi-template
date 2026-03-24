@@ -14,7 +14,7 @@ Set up full-stack-fastapi workspace from scratch. Clone repos: full-stack-fastap
 
 ## Repositories
 
-- **full-stack-fastapi-template**: `https://github.com/fastapi/full-stack-fastapi-template.git`
+- **full-stack-fastapi-template**: `https://github.com/okomissarov/full-stack-fastapi-template.git`
   This workspace
 - **aila-catalog-schema**: `git@gitlab.dataart.com:da/dalf/aila-catalog-schema.git` — `pip install -e .`
   Workspace types (KiroWorkspace, KiroAgent)

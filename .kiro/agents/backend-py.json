@@ -3,7 +3,12 @@
   "description": "Expert in FastAPI backend: models, CRUD, API routes, auth, config, database, email utilities.",
   "prompt": "file://../../prompts/backend-py.md",
   "tools": [
-    "code"
+    "code",
+    "fs_read",
+    "fs_write",
+    "execute_bash",
+    "grep",
+    "glob"
   ],
   "allowedTools": [],
   "resources": [

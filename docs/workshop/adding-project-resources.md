@@ -1,7 +1,6 @@
 # Session Report: Full Stack FastAPI Template
 
-request: I need to add a new resource type called 'projects' with the same patterns as items but with additional fields. What files do I need to modify and what patterns
-should I follow?
+request: I need to add a new resource type called 'projects' with the same patterns as items but with additional fields. What files do I need to modify and what patterns should I follow?
 
 **Date:** 2026-03-24  
 **Repository:** `/home/olegk/aila/z_practice_repos/full-stack-fastapi-template`

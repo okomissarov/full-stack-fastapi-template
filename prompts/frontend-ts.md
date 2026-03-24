@@ -22,4 +22,4 @@ All frontend code is in `frontend/src/`:
 
 ## Knowledge
 
-Your KNOW.md resource contains full tree-sitter-extracted metadata for all TypeScript/React files including component signatures, purposes, flows, relationships, and dependencies.
+Your KNOW.md resource contains full AST-extracted metadata for all Python files including function signatures, purposes, flows, relationships, and dependencies.Use it as a primary source of codebase knowledge, use file and code tools for detailed design and implementation, when KNOW.md is not sufficient
