@@ -79,7 +79,7 @@ The "without KNOW.md" response (`docs/session-report.md`) spent most of its time
 
 ### Objective
 
-Clone the ORIGINAL (undocumented) repo, set up Kiro, and ask the same questions. Compare your results with the workshop results to verify the difference.
+Experience the difference firsthand. Clone the ORIGINAL undocumented repo, ask questions without KNOW.md, then compare with the workshop results.
 
 ### Step 1: Clone Original Repo
 
@@ -88,19 +88,19 @@ git clone https://github.com/fastapi/full-stack-fastapi-template.git full-stack-
 cd full-stack-fastapi-original
 ```
 
-### Step 2: Set Up Kiro (No KNOW.md)
+### Step 2: Set Up Kiro and Code Intelligence
 
 ```bash
 kiro
-# Initialize code intelligence
+# Initialize code intelligence (LSP)
 /code init
 ```
 
-No workspace, no KNOW.md, no steering — just raw Kiro with code tools.
+No workspace, no KNOW.md, no steering — just Kiro with code tools.
 
-### Step 3: Ask the Same Questions
+### Step 3: Ask Questions Without KNOW.md
 
-Try the exact same prompts from Exercise 1:
+Try these prompts and record your observations:
 
 1. "What authentication flow does this app use? Trace from login form to JWT token."
 2. "Add a new 'projects' resource following the items pattern with fields: status, start_date, end_date, budget."
@@ -113,15 +113,46 @@ Try the exact same prompts from Exercise 1:
 - 🔍 How many files did the agent read?
 - ✅ Was the code accurate to the actual patterns?
 
-### Step 4: Generate KNOW.md and Compare
+### Step 4: Review the Comparison Report
 
-Now add KNOW.md to the original repo:
+Open the impact analysis from the workshop repo:
+
+```
+https://github.com/okomissarov/full-stack-fastapi-template/blob/master/docs/know-md-impact-analysis.md
+```
+
+Compare your "without KNOW.md" results against the documented findings:
+- Did your agent also spend time exploring before answering?
+- Were your responses missing code examples?
+- Did the agent read 15+ files to answer?
+
+### Step 5: Understand KNOW.md and AILA Metadata Generation
+
+Review these files in the workshop repo to understand how the metadata is generated:
+
+| File | What It Shows |
+|---|---|
+| `.aila/documentation.json` | Configuration — which languages, which directories to scan |
+| `.aila/.docignore` | Exclusion patterns — what to skip (tests, generated code, boilerplate) |
+| `document-meta/python/KNOW.md` | Generated output — Python AST-extracted metadata (functions, classes, signatures, purposes, relationships) |
+| `document-meta/typescript/KNOW.md` | Generated output — TypeScript tree-sitter-extracted metadata |
+| `workspace.py` | How agents are configured to use KNOW.md as resources |
+| `.kiro/agents/backend-py.json` | Agent config — `resources: ["file://document-meta/python/KNOW.md"]` |
+
+Key concepts:
+- **KNOW.md is auto-generated** — `python -m skill_sdk_aila.metadata --document` extracts metadata from source code via AST/tree-sitter parsing
+- **No manual writing** — unlike CLAUDE.md or hand-written steering docs
+- **Always in sync** — regenerate after code changes, metadata matches code
+- **Structured metadata** — function signatures, purposes, flows, relationships, dependencies — not just file listings
+
+### Step 6 (Optional): Generate KNOW.md for the Original Repo
+
+If you have `skill-sdk-aila` installed, try generating KNOW.md yourself:
 
 ```bash
-# Install SDK if needed
+cd full-stack-fastapi-original
 pip install skill-sdk-aila
 
-# Create config
 mkdir -p .aila
 cat > .aila/documentation.json << 'EOF'
 {
@@ -133,46 +164,24 @@ cat > .aila/documentation.json << 'EOF'
 }
 EOF
 
-# Create docignore
-cat > .aila/.docignore << 'EOF'
-**/node_modules/**
-**/__pycache__/**
-**/test_*.py
-**/*.spec.ts
-frontend/src/client/**
-frontend/src/components/ui/**
-backend/app/alembic/versions/**
-EOF
-
-# Generate
 python -m skill_sdk_aila.metadata --document
 ```
 
-Add KNOW.md to Kiro steering:
+Then add to Kiro steering and ask the same questions again:
 ```bash
 mkdir -p .kiro/steering
-ln -s ../../document-meta/python/KNOW.md .kiro/steering/KNOW-python.md
-ln -s ../../document-meta/typescript/KNOW.md .kiro/steering/KNOW-typescript.md
+cp document-meta/python/KNOW.md .kiro/steering/KNOW-python.md
+cp document-meta/typescript/KNOW.md .kiro/steering/KNOW-typescript.md
 ```
 
-### Step 5: Ask Again and Compare
-
-Ask the same questions again with KNOW.md loaded. Compare:
-
-| Question | Without KNOW.md | With KNOW.md |
-|---|---|---|
-| Auth flow | Time: ___ | Time: ___ |
-| | Code examples: Y/N | Code examples: Y/N |
-| | Files read: ___ | Files read: ___ |
-| Add projects | Time: ___ | Time: ___ |
-| | Code examples: Y/N | Code examples: Y/N |
-| | Pattern-accurate: Y/N | Pattern-accurate: Y/N |
-| Model relationships | Time: ___ | Time: ___ |
-| | Complete: Y/N | Complete: Y/N |
+You should see immediate improvement in response speed and quality — even without the AILA-standard docstrings that were added in the workshop repo.
 
 ### Deliverable
 
-Write a short summary (3-5 sentences) of your findings. Did you observe the same differences as the workshop demo? What surprised you?
+Write a short summary (3-5 sentences) of your findings:
+- Did you observe the same speed/quality differences as the workshop demo?
+- What surprised you?
+- How does auto-generated KNOW.md compare to manually written context docs?
 
 ---
 
