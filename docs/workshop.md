@@ -16,8 +16,7 @@ This workshop demonstrates how pre-extracted code metadata (KNOW.md) impacts AI 
 Clone the pre-documented repository:
 
 ```bash
-cd ~/aila/z_practice_repos
-git clone <workspace-repo-url> full-stack-fastapi-template
+git clone https://github.com/okomissarov/full-stack-fastapi-template.git
 cd full-stack-fastapi-template
 ```
 
@@ -85,7 +84,6 @@ Clone the ORIGINAL (undocumented) repo, set up Kiro, and ask the same questions.
 ### Step 1: Clone Original Repo
 
 ```bash
-cd ~/aila/z_practice_repos
 git clone https://github.com/fastapi/full-stack-fastapi-template.git full-stack-fastapi-original
 cd full-stack-fastapi-original
 ```
