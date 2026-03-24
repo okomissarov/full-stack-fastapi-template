@@ -1,3 +1,8 @@
+/**
+ * @file Signup route — new user registration page.
+ * @module routes/signup
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   createFileRoute,
@@ -20,6 +25,7 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
+/** Zod schema for signup: email, full_name, password + confirm_password with match refinement. */
 const formSchema = z
   .object({
     email: z.email(),
@@ -39,6 +45,9 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Route config for /signup. Redirects to / if already authenticated.
+ */
 export const Route = createFileRoute("/signup")({
   component: SignUp,
   beforeLoad: async () => {
@@ -57,6 +66,25 @@ export const Route = createFileRoute("/signup")({
   }),
 })
 
+/**
+ * Purpose: Registration page with email, name, password, and confirmation
+ *
+ * Structure:
+ *     email (string): input - User email
+ *     full_name (string): input - User display name
+ *     password (string): input - User password (min 8 chars)
+ *     confirm_password (string): input - Password confirmation (must match)
+ *
+ * Relationships:
+ *     Consumes: useAuth.signUpMutation
+ *     Produces: New user account, redirect to /login on success
+ *
+ * Flow:
+ *     1. Render signup form with 4 fields
+ *     2. Validate via Zod schema (including password match)
+ *     3. Strip confirm_password, call signUpMutation
+ *     4. Redirect to /login on success
+ */
 function SignUp() {
   const { signUpMutation } = useAuth()
   const form = useForm<FormData>({

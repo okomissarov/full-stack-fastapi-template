@@ -1,3 +1,20 @@
+"""
+Purpose: Configure Alembic migration environment for online and offline modes
+
+Structure:
+    get_url (func): config - Return database URL from settings
+    run_migrations_offline (func): migration - Run migrations without DB connection
+    run_migrations_online (func): migration - Run migrations with live DB connection
+
+Relationships:
+    Consumes: app.models.SQLModel.metadata, app.core.config.settings.SQLALCHEMY_DATABASE_URI
+    Produces: Database schema migrations
+
+Important:
+    app.models MUST be imported before target_metadata is set,
+    otherwise Alembic won't detect model changes for autogenerate.
+"""
+
 import os
 from logging.config import fileConfig
 
@@ -15,36 +32,41 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-# target_metadata = None
-
 from app.models import SQLModel  # noqa
 from app.core.config import settings # noqa
 
 target_metadata = SQLModel.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
 
 def get_url():
+    """
+    Purpose: Return database connection URL from application settings
+
+    Structure:
+        url (str): output - SQLAlchemy database URI
+
+    Relationships:
+        Consumes: settings.SQLALCHEMY_DATABASE_URI
+        Produces: Database URL string
+    """
     return str(settings.SQLALCHEMY_DATABASE_URI)
 
 
 def run_migrations_offline():
-    """Run migrations in 'offline' mode.
+    """
+    Purpose: Run migrations in offline mode (emit SQL without DB connection)
 
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
+    Structure:
+        url (str): internal - Database URL from get_url()
 
-    Calls to context.execute() here emit the given string to the
-    script output.
+    Relationships:
+        Consumes: get_url(), target_metadata
+        Produces: SQL migration statements
 
+    Flow:
+        1. Get database URL
+        2. Configure Alembic context with URL and metadata
+        3. Run migrations within transaction
     """
     url = get_url()
     context.configure(
@@ -56,11 +78,21 @@ def run_migrations_offline():
 
 
 def run_migrations_online():
-    """Run migrations in 'online' mode.
+    """
+    Purpose: Run migrations in online mode with live database connection
 
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
+    Structure:
+        configuration (dict): internal - Alembic config section
+        connectable (Engine): internal - SQLAlchemy engine
 
+    Relationships:
+        Consumes: get_url(), config section, target_metadata
+        Produces: Applied database migrations
+
+    Flow:
+        1. Build engine config with database URL
+        2. Create connectable engine with NullPool
+        3. Configure context with connection and run migrations
     """
     configuration = config.get_section(config.config_ini_section)
     configuration["sqlalchemy.url"] = get_url()

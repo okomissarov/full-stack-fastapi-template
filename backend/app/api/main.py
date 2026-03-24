@@ -1,3 +1,17 @@
+"""
+Purpose: Register all API route modules into the main API router
+
+Structure:
+    api_router (APIRouter): output - Combined router with all route modules
+
+Relationships:
+    Consumes: api.routes.login, api.routes.users, api.routes.utils, api.routes.items, api.routes.private
+    Produces: api_router (consumed by app.main)
+
+Note:
+    Private routes only registered when ENVIRONMENT=local.
+"""
+
 from fastapi import APIRouter
 
 from app.api.routes import items, login, private, users, utils

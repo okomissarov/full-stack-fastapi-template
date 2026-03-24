@@ -1,3 +1,13 @@
+/**
+ * @module UserSettings/UserInformation
+ *
+ * Purpose: Editable display of current user's profile information (name, email).
+ *
+ * Relationships:
+ *     Consumes: UsersService.updateUserMe API, useAuth hook
+ *     Used by: User settings page
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
@@ -28,6 +38,23 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Purpose: Toggle-editable form displaying and updating current user's name and email.
+ *
+ * Structure:
+ *     editMode (boolean): internal - Toggles between read-only and edit views
+ *     formSchema (zod): Validates email format, optional name (max 30 chars)
+ *
+ * Relationships:
+ *     Consumes: UsersService.updateUserMe API, useAuth (current user data)
+ *     Produces: Updated user profile, success toast, invalidates all query caches
+ *
+ * Flow:
+ *     1. Display user info in read-only mode with Edit button
+ *     2. Switch to editable inputs on Edit click
+ *     3. Submit only changed fields to updateUserMe API
+ *     4. Show success/error toast and return to read-only mode
+ */
 const UserInformation = () => {
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()

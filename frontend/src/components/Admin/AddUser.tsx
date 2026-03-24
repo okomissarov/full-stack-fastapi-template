@@ -1,3 +1,13 @@
+/**
+ * @module Admin/AddUser
+ *
+ * Purpose: Dialog for creating new user accounts in the admin panel.
+ *
+ * Relationships:
+ *     Consumes: UsersService.createUser API
+ *     Used by: Admin users management page
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Plus } from "lucide-react"
@@ -52,6 +62,23 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Purpose: Modal dialog for creating new user accounts with email, password, and role fields.
+ *
+ * Structure:
+ *     isOpen (boolean): internal - Dialog visibility state
+ *     formSchema (zod): Validates email, password match, superuser/active flags
+ *
+ * Relationships:
+ *     Consumes: UsersService.createUser API
+ *     Produces: New user record, success toast, invalidates "users" query cache
+ *
+ * Flow:
+ *     1. Open dialog via trigger button
+ *     2. Validate form fields (email, password, confirm, superuser, active)
+ *     3. Call createUser API on submit
+ *     4. Show success/error toast and close dialog
+ */
 const AddUser = () => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()

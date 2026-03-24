@@ -1,3 +1,30 @@
+"""
+Purpose: Provide CRUD API endpoints for User management with role-based access control
+
+Structure:
+    read_users (GET /): endpoint - List users (superuser only)
+    create_user (POST /): endpoint - Create user (superuser only)
+    update_user_me (PATCH /me): endpoint - Update own profile
+    update_password_me (PATCH /me/password): endpoint - Change own password
+    read_user_me (GET /me): endpoint - Get own profile
+    delete_user_me (DELETE /me): endpoint - Delete own account (non-superuser only)
+    register_user (POST /signup): endpoint - Public self-registration
+    read_user_by_id (GET /{user_id}): endpoint - Get user by ID
+    update_user (PATCH /{user_id}): endpoint - Update user (superuser only)
+    delete_user (DELETE /{user_id}): endpoint - Delete user (superuser only)
+
+Relationships:
+    Consumes: crud (create_user, update_user, get_user_by_email), models (User, Item, schemas)
+    Consumes: utils.generate_new_account_email, utils.send_email
+    Produces: UserPublic, UsersPublic, Message responses
+
+Semantics:
+    Domain: identity
+    Entity: User
+    Logic: [Superusers cannot delete themselves, email uniqueness enforced,
+            new account email sent if SMTP configured, items cascade-deleted with user]
+"""
+
 import uuid
 from typing import Any
 
@@ -36,7 +63,17 @@ router = APIRouter(prefix="/users", tags=["users"])
 )
 def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     """
-    Retrieve users.
+    Purpose: Retrieve paginated list of all users (superuser only)
+
+    Structure:
+        session (SessionDep): input - Database session
+        skip (int): input - Pagination offset
+        limit (int): input - Max users per page
+        users (UsersPublic): output - Paginated users list with count
+
+    Relationships:
+        Consumes: User table
+        Produces: UsersPublic response
     """
 
     count_statement = select(func.count()).select_from(User)
@@ -55,7 +92,21 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
 )
 def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
-    Create new user.
+    Purpose: Create a new user (superuser only), send welcome email if SMTP configured
+
+    Structure:
+        session (SessionDep): input - Database session
+        user_in (UserCreate): input - User creation payload
+        user (UserPublic): output - Created user
+
+    Relationships:
+        Consumes: crud.get_user_by_email, crud.create_user, utils.send_email
+        Produces: User table row, UserPublic response, welcome email
+
+    Flow:
+        1. Check email uniqueness, raise 400 if duplicate
+        2. Create user via crud
+        3. Send welcome email if SMTP enabled
     """
     user = crud.get_user_by_email(session=session, email=user_in.email)
     if user:
@@ -82,7 +133,22 @@ def update_user_me(
     *, session: SessionDep, user_in: UserUpdateMe, current_user: CurrentUser
 ) -> Any:
     """
-    Update own user.
+    Purpose: Update own profile (name and email)
+
+    Structure:
+        session (SessionDep): input - Database session
+        user_in (UserUpdateMe): input - Partial profile update
+        current_user (CurrentUser): input - Authenticated user
+        user (UserPublic): output - Updated user profile
+
+    Relationships:
+        Consumes: crud.get_user_by_email, User table
+        Produces: Updated User table row, UserPublic response
+
+    Flow:
+        1. If email changing, check uniqueness (raise 409 if taken)
+        2. Apply partial update to current user
+        3. Persist and return updated user
     """
 
     if user_in.email:
@@ -104,7 +170,22 @@ def update_password_me(
     *, session: SessionDep, body: UpdatePassword, current_user: CurrentUser
 ) -> Any:
     """
-    Update own password.
+    Purpose: Change own password with current password verification
+
+    Structure:
+        session (SessionDep): input - Database session
+        body (UpdatePassword): input - Current and new passwords
+        current_user (CurrentUser): input - Authenticated user
+        message (Message): output - Success confirmation
+
+    Relationships:
+        Consumes: core.security.verify_password, core.security.get_password_hash
+        Produces: Updated password hash in User table, Message response
+
+    Flow:
+        1. Verify current password, raise 400 if incorrect
+        2. Reject if new password equals current, raise 400
+        3. Hash new password, persist, and return confirmation
     """
     verified, _ = verify_password(body.current_password, current_user.hashed_password)
     if not verified:
@@ -123,7 +204,15 @@ def update_password_me(
 @router.get("/me", response_model=UserPublic)
 def read_user_me(current_user: CurrentUser) -> Any:
     """
-    Get current user.
+    Purpose: Get current authenticated user profile
+
+    Structure:
+        current_user (CurrentUser): input - Authenticated user
+        user (UserPublic): output - Current user profile
+
+    Relationships:
+        Consumes: CurrentUser dependency
+        Produces: UserPublic response
     """
     return current_user
 
@@ -131,7 +220,16 @@ def read_user_me(current_user: CurrentUser) -> Any:
 @router.delete("/me", response_model=Message)
 def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     """
-    Delete own user.
+    Purpose: Delete own account (superusers cannot delete themselves)
+
+    Structure:
+        session (SessionDep): input - Database session
+        current_user (CurrentUser): input - Authenticated user
+        message (Message): output - Deletion confirmation
+
+    Relationships:
+        Consumes: User table
+        Produces: Message response
     """
     if current_user.is_superuser:
         raise HTTPException(
@@ -145,7 +243,21 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
 @router.post("/signup", response_model=UserPublic)
 def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
-    Create new user without the need to be logged in.
+    Purpose: Public self-registration (no auth required)
+
+    Structure:
+        session (SessionDep): input - Database session
+        user_in (UserRegister): input - Registration payload
+        user (UserPublic): output - Created user
+
+    Relationships:
+        Consumes: crud.get_user_by_email, crud.create_user
+        Produces: User table row, UserPublic response
+
+    Flow:
+        1. Check email uniqueness, raise 400 if duplicate
+        2. Convert to UserCreate and create user via crud
+        3. Return created user
     """
     user = crud.get_user_by_email(session=session, email=user_in.email)
     if user:
@@ -163,7 +275,22 @@ def read_user_by_id(
     user_id: uuid.UUID, session: SessionDep, current_user: CurrentUser
 ) -> Any:
     """
-    Get a specific user by id.
+    Purpose: Get user by ID (own profile or superuser only)
+
+    Structure:
+        user_id (uuid.UUID): input - Target user ID
+        session (SessionDep): input - Database session
+        current_user (CurrentUser): input - Authenticated user
+        user (UserPublic): output - User profile
+
+    Relationships:
+        Consumes: User table, current user context
+        Produces: UserPublic response
+
+    Flow:
+        1. Fetch user by ID
+        2. Return immediately if requesting own profile
+        3. Raise 403 if not superuser, raise 404 if user not found
     """
     user = session.get(User, user_id)
     if user == current_user:
@@ -190,7 +317,22 @@ def update_user(
     user_in: UserUpdate,
 ) -> Any:
     """
-    Update a user.
+    Purpose: Update a user by ID (superuser only)
+
+    Structure:
+        session (SessionDep): input - Database session
+        user_id (uuid.UUID): input - Target user ID
+        user_in (UserUpdate): input - Partial update payload
+        user (UserPublic): output - Updated user
+
+    Relationships:
+        Consumes: crud.get_user_by_email, crud.update_user, User table
+        Produces: Updated User table row, UserPublic response
+
+    Flow:
+        1. Fetch user by ID, raise 404 if not found
+        2. If email changing, check uniqueness (raise 409 if taken)
+        3. Update user via crud and return
     """
 
     db_user = session.get(User, user_id)
@@ -215,7 +357,22 @@ def delete_user(
     session: SessionDep, current_user: CurrentUser, user_id: uuid.UUID
 ) -> Message:
     """
-    Delete a user.
+    Purpose: Delete a user and their items (superuser only, cannot self-delete)
+
+    Structure:
+        session (SessionDep): input - Database session
+        current_user (CurrentUser): input - Authenticated superuser
+        user_id (uuid.UUID): input - Target user ID
+        message (Message): output - Deletion confirmation
+
+    Relationships:
+        Consumes: User table, Item table
+        Produces: Message response
+
+    Flow:
+        1. Fetch user by ID, raise 404 if not found
+        2. Raise 403 if attempting self-deletion
+        3. Delete user's items, then delete user
     """
     user = session.get(User, user_id)
     if not user:

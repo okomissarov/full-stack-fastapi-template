@@ -1,0 +1,13 @@
+{
+  "name": "frontend-ts",
+  "description": "Expert in React frontend: components, routes, hooks, state management, API integration.",
+  "prompt": "file://../../prompts/frontend-ts.md",
+  "tools": [
+    "code"
+  ],
+  "allowedTools": [],
+  "resources": [
+    "file://document-meta/typescript/KNOW.md"
+  ],
+  "includeMcpJson": true
+}

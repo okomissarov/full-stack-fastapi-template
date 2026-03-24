@@ -1,6 +1,21 @@
+/**
+ * @module Common/NotFound
+ *
+ * Purpose: 404 page displayed when a route is not matched.
+ *
+ * Relationships:
+ *     Used by: Router notFoundComponent
+ */
+
 import { Link } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 
+/**
+ * Purpose: Full-screen 404 page with "Go Back" navigation to home.
+ *
+ * Relationships:
+ *     Produces: Navigation to root route via Link
+ */
 const NotFound = () => {
   return (
     <div

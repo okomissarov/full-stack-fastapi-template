@@ -1,3 +1,8 @@
+/**
+ * @file Admin route — superuser-only user management page.
+ * @module routes/_layout/admin
+ */
+
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { Suspense } from "react"
@@ -9,6 +14,7 @@ import { DataTable } from "@/components/Common/DataTable"
 import PendingUsers from "@/components/Pending/PendingUsers"
 import useAuth from "@/hooks/useAuth"
 
+/** TanStack Query options for fetching all users (up to 100). */
 function getUsersQueryOptions() {
   return {
     queryFn: () => UsersService.readUsers({ skip: 0, limit: 100 }),
@@ -16,6 +22,9 @@ function getUsersQueryOptions() {
   }
 }
 
+/**
+ * Route config for /_layout/admin. Redirects non-superusers to /.
+ */
 export const Route = createFileRoute("/_layout/admin")({
   component: Admin,
   beforeLoad: async () => {
@@ -35,6 +44,7 @@ export const Route = createFileRoute("/_layout/admin")({
   }),
 })
 
+/** Fetches users via suspense query and renders DataTable with current-user flag. */
 function UsersTableContent() {
   const { user: currentUser } = useAuth()
   const { data: users } = useSuspenseQuery(getUsersQueryOptions())
@@ -47,6 +57,7 @@ function UsersTableContent() {
   return <DataTable columns={columns} data={tableData} />
 }
 
+/** Suspense wrapper for UsersTableContent with PendingUsers fallback. */
 function UsersTable() {
   return (
     <Suspense fallback={<PendingUsers />}>
@@ -55,6 +66,16 @@ function UsersTable() {
   )
 }
 
+/**
+ * Purpose: Admin page for managing user accounts (superuser only)
+ *
+ * Structure:
+ *     users (UserPublic[]): input - All users fetched via UsersService
+ *
+ * Relationships:
+ *     Consumes: UsersService.readUsers, useAuth.user, Admin/AddUser, Admin/columns
+ *     Produces: User management table with add-user action
+ */
 function Admin() {
   return (
     <div className="flex flex-col gap-6">

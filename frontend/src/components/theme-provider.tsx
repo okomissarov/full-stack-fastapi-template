@@ -1,3 +1,13 @@
+/**
+ * @module theme-provider
+ *
+ * Purpose: React context provider for application theme management (dark/light/system).
+ *
+ * Relationships:
+ *     Consumed by: Appearance, SidebarAppearance, Logo components via useTheme hook
+ *     Used by: App root component
+ */
+
 import {
   createContext,
   useCallback,
@@ -6,14 +16,31 @@ import {
   useState,
 } from "react"
 
+/** Purpose: Available theme modes. */
 export type Theme = "dark" | "light" | "system"
 
+/**
+ * Purpose: Props for ThemeProvider component.
+ *
+ * Structure:
+ *     children (ReactNode): input - App content to wrap
+ *     defaultTheme (Theme): input - Initial theme, defaults to "system"
+ *     storageKey (string): input - localStorage key for persistence
+ */
 type ThemeProviderProps = {
   children: React.ReactNode
   defaultTheme?: Theme
   storageKey?: string
 }
 
+/**
+ * Purpose: Context state shape for theme provider.
+ *
+ * Structure:
+ *     theme (Theme): Current theme setting (may be "system")
+ *     resolvedTheme ("dark"|"light"): Actual resolved theme after system detection
+ *     setTheme (function): Theme setter with localStorage persistence
+ */
 type ThemeProviderState = {
   theme: Theme
   resolvedTheme: "dark" | "light"
@@ -28,6 +55,23 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
+/**
+ * Purpose: Context provider managing theme state, localStorage persistence, and system preference detection.
+ *
+ * Structure:
+ *     defaultTheme (Theme): input - Fallback theme, defaults to "system"
+ *     storageKey (string): input - localStorage key, defaults to "vite-ui-theme"
+ *
+ * Relationships:
+ *     Produces: ThemeProviderContext consumed by useTheme hook
+ *     Used by: App root
+ *
+ * Flow:
+ *     1. Read persisted theme from localStorage (or use default)
+ *     2. Apply theme class to document root element
+ *     3. Listen for system color-scheme changes when theme is "system"
+ *     4. Expose theme, resolvedTheme, and setTheme via context
+ */
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -105,6 +149,14 @@ export function ThemeProvider({
   )
 }
 
+/**
+ * Purpose: Hook to access theme context (theme, resolvedTheme, setTheme).
+ *
+ * Relationships:
+ *     Consumes: ThemeProviderContext
+ *
+ * @throws Error if used outside ThemeProvider
+ */
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext)
 

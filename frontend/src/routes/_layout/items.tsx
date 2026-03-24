@@ -1,3 +1,8 @@
+/**
+ * @file Items route — CRUD listing page for user items.
+ * @module routes/_layout/items
+ */
+
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { Search } from "lucide-react"
@@ -9,6 +14,7 @@ import AddItem from "@/components/Items/AddItem"
 import { columns } from "@/components/Items/columns"
 import PendingItems from "@/components/Pending/PendingItems"
 
+/** TanStack Query options for fetching all items (up to 100). */
 function getItemsQueryOptions() {
   return {
     queryFn: () => ItemsService.readItems({ skip: 0, limit: 100 }),
@@ -16,6 +22,9 @@ function getItemsQueryOptions() {
   }
 }
 
+/**
+ * Route config for /_layout/items.
+ */
 export const Route = createFileRoute("/_layout/items")({
   component: Items,
   head: () => ({
@@ -27,6 +36,7 @@ export const Route = createFileRoute("/_layout/items")({
   }),
 })
 
+/** Fetches items via suspense query; shows empty state or DataTable. */
 function ItemsTableContent() {
   const { data: items } = useSuspenseQuery(getItemsQueryOptions())
 
@@ -45,6 +55,7 @@ function ItemsTableContent() {
   return <DataTable columns={columns} data={items.data} />
 }
 
+/** Suspense wrapper for ItemsTableContent with PendingItems fallback. */
 function ItemsTable() {
   return (
     <Suspense fallback={<PendingItems />}>
@@ -53,6 +64,16 @@ function ItemsTable() {
   )
 }
 
+/**
+ * Purpose: Items listing page with data table and add-item action
+ *
+ * Structure:
+ *     items (ItemPublic[]): input - All items fetched via ItemsService
+ *
+ * Relationships:
+ *     Consumes: ItemsService.readItems, Items/AddItem, Items/columns
+ *     Produces: Items data table with empty state and add-item button
+ */
 function Items() {
   return (
     <div className="flex flex-col gap-6">

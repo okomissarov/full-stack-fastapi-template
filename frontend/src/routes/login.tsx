@@ -1,3 +1,8 @@
+/**
+ * @file Login route — email/password authentication page.
+ * @module routes/login
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   createFileRoute,
@@ -22,6 +27,7 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
+/** Zod schema for login form: email (username) + password (min 8 chars). */
 const formSchema = z.object({
   username: z.email(),
   password: z
@@ -32,6 +38,9 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Route config for /login. Redirects to / if already authenticated.
+ */
 export const Route = createFileRoute("/login")({
   component: Login,
   beforeLoad: async () => {
@@ -50,6 +59,23 @@ export const Route = createFileRoute("/login")({
   }),
 })
 
+/**
+ * Purpose: Login page with email/password authentication
+ *
+ * Structure:
+ *     username (string): input - User email from form
+ *     password (string): input - User password from form
+ *
+ * Relationships:
+ *     Consumes: useAuth.loginMutation
+ *     Produces: Auth token stored in localStorage, redirect to /
+ *
+ * Flow:
+ *     1. Render login form with email + password fields
+ *     2. Validate via Zod schema on blur
+ *     3. Call loginMutation on submit
+ *     4. Redirect to home on success
+ */
 function Login() {
   const { loginMutation } = useAuth()
   const form = useForm<FormData>({

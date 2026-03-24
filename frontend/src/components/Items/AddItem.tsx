@@ -1,3 +1,13 @@
+/**
+ * @module Items/AddItem
+ *
+ * Purpose: Dialog for creating new items with title and description.
+ *
+ * Relationships:
+ *     Consumes: ItemsService.createItem API
+ *     Used by: Items management page
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Plus } from "lucide-react"
@@ -37,6 +47,23 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Purpose: Modal dialog for creating a new item with title and optional description.
+ *
+ * Structure:
+ *     isOpen (boolean): internal - Dialog visibility state
+ *     formSchema (zod): Validates required title field
+ *
+ * Relationships:
+ *     Consumes: ItemsService.createItem API
+ *     Produces: New item record, success toast, invalidates "items" query cache
+ *
+ * Flow:
+ *     1. Open dialog via trigger button
+ *     2. Validate title (required) and description (optional)
+ *     3. Call createItem API on submit
+ *     4. Show success/error toast and close dialog
+ */
 const AddItem = () => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()

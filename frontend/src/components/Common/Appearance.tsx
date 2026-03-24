@@ -1,3 +1,13 @@
+/**
+ * @module Common/Appearance
+ *
+ * Purpose: Theme toggle components for switching between light, dark, and system modes.
+ *
+ * Relationships:
+ *     Consumes: ThemeProvider context (useTheme)
+ *     Used by: AppSidebar (SidebarAppearance), AuthLayout (Appearance)
+ */
+
 import { Monitor, Moon, Sun } from "lucide-react"
 
 import { type Theme, useTheme } from "@/components/theme-provider"
@@ -22,6 +32,13 @@ const ICON_MAP: Record<Theme, LucideIcon> = {
   dark: Moon,
 }
 
+/**
+ * Purpose: Sidebar-integrated theme toggle with icon reflecting current theme.
+ *
+ * Relationships:
+ *     Consumes: useTheme, useSidebar contexts
+ *     Used by: AppSidebar footer
+ */
 export const SidebarAppearance = () => {
   const { isMobile } = useSidebar()
   const { setTheme, theme } = useTheme()
@@ -66,6 +83,13 @@ export const SidebarAppearance = () => {
   )
 }
 
+/**
+ * Purpose: Standalone theme toggle button with sun/moon icon animation.
+ *
+ * Relationships:
+ *     Consumes: useTheme context
+ *     Used by: AuthLayout header
+ */
 export const Appearance = () => {
   const { setTheme } = useTheme()
 

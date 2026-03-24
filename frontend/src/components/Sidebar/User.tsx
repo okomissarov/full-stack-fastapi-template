@@ -1,3 +1,13 @@
+/**
+ * @module Sidebar/User
+ *
+ * Purpose: Sidebar user menu with avatar, settings link, and logout action.
+ *
+ * Relationships:
+ *     Consumes: useAuth hook for logout, useSidebar for mobile handling
+ *     Used by: AppSidebar footer
+ */
+
 import { Link as RouterLink } from "@tanstack/react-router"
 import { ChevronsUpDown, LogOut, Settings } from "lucide-react"
 
@@ -19,11 +29,25 @@ import {
 import useAuth from "@/hooks/useAuth"
 import { getInitials } from "@/utils"
 
+/**
+ * Purpose: Props for UserInfo display component.
+ *
+ * Structure:
+ *     fullName (string): input - User's display name
+ *     email (string): input - User's email address
+ */
 interface UserInfoProps {
   fullName?: string
   email?: string
 }
 
+/**
+ * Purpose: Avatar with name and email display used in sidebar user menu.
+ *
+ * Structure:
+ *     fullName (string): input - Displayed name, initials used for avatar
+ *     email (string): input - Displayed below name
+ */
 function UserInfo({ fullName, email }: UserInfoProps) {
   return (
     <div className="flex items-center gap-2.5 w-full min-w-0">
@@ -40,6 +64,21 @@ function UserInfo({ fullName, email }: UserInfoProps) {
   )
 }
 
+/**
+ * Purpose: Sidebar user dropdown with avatar, settings navigation, and logout.
+ *
+ * Structure:
+ *     user (any): input - Current user object (null renders nothing)
+ *
+ * Relationships:
+ *     Consumes: useAuth (logout), useSidebar (mobile close), getInitials utility
+ *     Used by: AppSidebar footer
+ *
+ * Flow:
+ *     1. Render avatar trigger with user info
+ *     2. Show dropdown with User Settings link and Log Out action
+ *     3. Auto-close mobile sidebar on settings navigation
+ */
 export function User({ user }: { user: any }) {
   const { logout } = useAuth()
   const { isMobile, setOpenMobile } = useSidebar()

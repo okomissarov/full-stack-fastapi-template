@@ -1,3 +1,13 @@
+/**
+ * @module Common/Logo
+ *
+ * Purpose: Theme-aware FastAPI logo component with full, icon, and responsive variants.
+ *
+ * Relationships:
+ *     Consumes: ThemeProvider context (useTheme)
+ *     Used by: AuthLayout, AppSidebar
+ */
+
 import { Link } from "@tanstack/react-router"
 
 import { useTheme } from "@/components/theme-provider"
@@ -7,12 +17,31 @@ import iconLight from "/assets/images/fastapi-icon-light.svg"
 import logo from "/assets/images/fastapi-logo.svg"
 import logoLight from "/assets/images/fastapi-logo-light.svg"
 
+/**
+ * Purpose: Props for Logo component.
+ *
+ * Structure:
+ *     variant ("full"|"icon"|"responsive"): input - Logo display mode
+ *     className (string): input - Additional CSS classes
+ *     asLink (boolean): input - Whether to wrap logo in a home link
+ */
 interface LogoProps {
   variant?: "full" | "icon" | "responsive"
   className?: string
   asLink?: boolean
 }
 
+/**
+ * Purpose: Renders theme-aware FastAPI logo in full, icon, or responsive (collapsible) mode.
+ *
+ * Structure:
+ *     variant ("full"|"icon"|"responsive"): input - Display mode, defaults to "full"
+ *     asLink (boolean): input - Wraps in Link to "/" when true (default)
+ *
+ * Relationships:
+ *     Consumes: useTheme for dark/light logo selection
+ *     Used by: AuthLayout (full), AppSidebar (responsive)
+ */
 export function Logo({
   variant = "full",
   className,

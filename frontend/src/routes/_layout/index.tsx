@@ -1,7 +1,15 @@
+/**
+ * @file Dashboard route — authenticated home page with user greeting.
+ * @module routes/_layout/index
+ */
+
 import { createFileRoute } from "@tanstack/react-router"
 
 import useAuth from "@/hooks/useAuth"
 
+/**
+ * Route config for /_layout/ (dashboard index).
+ */
 export const Route = createFileRoute("/_layout/")({
   component: Dashboard,
   head: () => ({
@@ -13,6 +21,16 @@ export const Route = createFileRoute("/_layout/")({
   }),
 })
 
+/**
+ * Purpose: Dashboard home page displaying welcome greeting
+ *
+ * Structure:
+ *     currentUser (UserPublic): input - Current authenticated user from useAuth
+ *
+ * Relationships:
+ *     Consumes: useAuth.user
+ *     Produces: Greeting UI with user's name or email
+ */
 function Dashboard() {
   const { user: currentUser } = useAuth()
 

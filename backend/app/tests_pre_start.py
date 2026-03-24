@@ -1,3 +1,21 @@
+"""
+Purpose: Wait for database readiness before test suite execution with retry logic
+
+Structure:
+    init (func): setup - Attempt DB connection with tenacity retry
+    main (func): entry - Script entry point
+
+Relationships:
+    Consumes: core.db.engine
+    Produces: (blocks until DB is ready)
+
+Semantics:
+    Logic: [Retries every 1 second for up to 5 minutes (300 attempts)]
+
+Note:
+    Run via scripts/tests-start.sh before pytest.
+"""
+
 import logging
 
 from sqlalchemy import Engine
@@ -20,6 +38,12 @@ wait_seconds = 1
     after=after_log(logger, logging.WARN),
 )
 def init(db_engine: Engine) -> None:
+    """
+    Purpose: Attempt single DB connection, raising on failure (retried by tenacity)
+
+    Structure:
+        db_engine (Engine): input - SQLAlchemy engine to test
+    """
     try:
         # Try to create session to check if DB is awake
         with Session(db_engine) as session:
@@ -30,6 +54,7 @@ def init(db_engine: Engine) -> None:
 
 
 def main() -> None:
+    """Purpose: Entry point — wait for database readiness with retry logging"""
     logger.info("Initializing service")
     init(engine)
     logger.info("Service finished initializing")

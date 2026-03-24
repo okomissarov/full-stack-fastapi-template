@@ -1,3 +1,13 @@
+/**
+ * @module Items/DeleteItem
+ *
+ * Purpose: Confirmation dialog for deleting an item.
+ *
+ * Relationships:
+ *     Consumes: ItemsService.deleteItem API
+ *     Used by: ItemActionsMenu dropdown
+ */
+
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Trash2 } from "lucide-react"
 import { useState } from "react"
@@ -19,11 +29,35 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
+/**
+ * Purpose: Props for DeleteItem dialog component.
+ *
+ * Structure:
+ *     id (string): input - Item ID to delete
+ *     onSuccess (function): input - Callback after successful deletion
+ */
 interface DeleteItemProps {
   id: string
   onSuccess: () => void
 }
 
+/**
+ * Purpose: Destructive confirmation dialog for permanently deleting an item.
+ *
+ * Structure:
+ *     id (string): input - Item ID to delete
+ *     onSuccess (function): input - Callback on successful deletion
+ *
+ * Relationships:
+ *     Consumes: ItemsService.deleteItem API
+ *     Produces: Success toast, invalidates all query caches
+ *
+ * Flow:
+ *     1. Render as dropdown menu item
+ *     2. Open confirmation dialog on click
+ *     3. Call deleteItem API on confirm
+ *     4. Show success/error toast and invoke onSuccess callback
+ */
 const DeleteItem = ({ id, onSuccess }: DeleteItemProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()

@@ -1,3 +1,12 @@
+/**
+ * @module Common/Footer
+ *
+ * Purpose: Application footer with copyright and social media links.
+ *
+ * Relationships:
+ *     Used by: AuthLayout
+ */
+
 import { FaGithub, FaLinkedinIn } from "react-icons/fa"
 import { FaXTwitter } from "react-icons/fa6"
 
@@ -15,6 +24,12 @@ const socialLinks = [
   },
 ]
 
+/**
+ * Purpose: Footer bar with dynamic copyright year and GitHub/X/LinkedIn links.
+ *
+ * Relationships:
+ *     Used by: AuthLayout
+ */
 export function Footer() {
   const currentYear = new Date().getFullYear()
 

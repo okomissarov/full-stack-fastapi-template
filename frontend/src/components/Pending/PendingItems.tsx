@@ -1,3 +1,12 @@
+/**
+ * @module Pending/PendingItems
+ *
+ * Purpose: Skeleton loading placeholder for the items table.
+ *
+ * Relationships:
+ *     Used by: Items page during data fetch
+ */
+
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
@@ -8,6 +17,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+/**
+ * Purpose: Renders 5 skeleton rows matching the items table column layout (ID, Title, Description, Actions).
+ *
+ * Relationships:
+ *     Used by: Items page loading state
+ */
 const PendingItems = () => (
   <Table>
     <TableHeader>

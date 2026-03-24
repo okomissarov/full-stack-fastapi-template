@@ -1,3 +1,19 @@
+"""
+Purpose: Initialize FastAPI application with CORS, Sentry, and API router
+
+Structure:
+    app (FastAPI): output - Configured FastAPI application instance
+    custom_generate_unique_id (func): config - Generate OpenAPI operation IDs from route tag + name
+
+Relationships:
+    Consumes: core.config.settings, api.main.api_router
+    Produces: FastAPI app (consumed by uvicorn)
+
+Semantics:
+    Domain: application
+    Logic: [Sentry enabled only in non-local environments, CORS origins from settings]
+"""
+
 import sentry_sdk
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
@@ -8,6 +24,7 @@ from app.core.config import settings
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
+    """Purpose: Generate OpenAPI operation ID as '{tag}-{name}' for client codegen"""
     return f"{route.tags[0]}-{route.name}"
 
 

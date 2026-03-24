@@ -1,0 +1,13 @@
+{
+  "name": "backend-py",
+  "description": "Expert in FastAPI backend: models, CRUD, API routes, auth, config, database, email utilities.",
+  "prompt": "file://../../prompts/backend-py.md",
+  "tools": [
+    "code"
+  ],
+  "allowedTools": [],
+  "resources": [
+    "file://document-meta/python/KNOW.md"
+  ],
+  "includeMcpJson": true
+}

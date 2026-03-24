@@ -1,3 +1,12 @@
+/**
+ * @module Pending/PendingUsers
+ *
+ * Purpose: Skeleton loading placeholder for the users table.
+ *
+ * Relationships:
+ *     Used by: Admin users page during data fetch
+ */
+
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
@@ -8,6 +17,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+/**
+ * Purpose: Renders 5 skeleton rows matching the users table column layout (Name, Email, Role, Status, Actions).
+ *
+ * Relationships:
+ *     Used by: Admin users page loading state
+ */
 const PendingUsers = () => (
   <Table>
     <TableHeader>

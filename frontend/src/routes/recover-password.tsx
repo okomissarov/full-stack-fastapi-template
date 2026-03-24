@@ -1,3 +1,8 @@
+/**
+ * @file Recover password route — sends password recovery email.
+ * @module routes/recover-password
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import {
@@ -24,12 +29,14 @@ import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
+/** Zod schema for recovery form: email only. */
 const formSchema = z.object({
-  email: z.email(),
-})
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Route config for /recover-password. Redirects to / if already authenticated.
+ */
 export const Route = createFileRoute("/recover-password")({
   component: RecoverPassword,
   beforeLoad: async () => {
@@ -48,6 +55,22 @@ export const Route = createFileRoute("/recover-password")({
   }),
 })
 
+/**
+ * Purpose: Password recovery page — sends reset email to user
+ *
+ * Structure:
+ *     email (string): input - User email for recovery
+ *
+ * Relationships:
+ *     Consumes: LoginService.recoverPassword API
+ *     Produces: Recovery email sent, success toast notification
+ *
+ * Flow:
+ *     1. Render email input form
+ *     2. Validate email via Zod
+ *     3. Call recoverPassword API
+ *     4. Show success toast, reset form
+ */
 function RecoverPassword() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),

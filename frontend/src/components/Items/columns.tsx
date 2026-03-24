@@ -1,3 +1,13 @@
+/**
+ * @module Items/columns
+ *
+ * Purpose: Column definitions for the items data table.
+ *
+ * Relationships:
+ *     Consumes: ItemActionsMenu component, ItemPublic type
+ *     Used by: Items page DataTable
+ */
+
 import type { ColumnDef } from "@tanstack/react-table"
 import { Check, Copy } from "lucide-react"
 
@@ -7,6 +17,15 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 import { cn } from "@/lib/utils"
 import { ItemActionsMenu } from "./ItemActionsMenu"
 
+/**
+ * Purpose: Inline component displaying an item ID with copy-to-clipboard button.
+ *
+ * Structure:
+ *     id (string): input - Item ID to display and copy
+ *
+ * Relationships:
+ *     Consumes: useCopyToClipboard hook
+ */
 function CopyId({ id }: { id: string }) {
   const [copiedText, copy] = useCopyToClipboard()
   const isCopied = copiedText === id
@@ -31,6 +50,19 @@ function CopyId({ id }: { id: string }) {
   )
 }
 
+/**
+ * Purpose: TanStack Table column definitions for the items table.
+ *
+ * Structure:
+ *     id: Copyable item ID (mono font)
+ *     title: Item title
+ *     description: Truncated description with fallback text
+ *     actions: ItemActionsMenu dropdown
+ *
+ * Relationships:
+ *     Consumes: CopyId helper, ItemActionsMenu component
+ *     Used by: Items page DataTable
+ */
 export const columns: ColumnDef<ItemPublic>[] = [
   {
     accessorKey: "id",

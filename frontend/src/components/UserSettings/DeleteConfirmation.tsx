@@ -1,3 +1,13 @@
+/**
+ * @module UserSettings/DeleteConfirmation
+ *
+ * Purpose: Confirmation dialog for self-deleting the current user's account.
+ *
+ * Relationships:
+ *     Consumes: UsersService.deleteUserMe API, useAuth logout
+ *     Used by: DeleteAccount component
+ */
+
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
@@ -18,6 +28,19 @@ import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
+/**
+ * Purpose: Modal confirmation dialog for permanent account self-deletion.
+ *
+ * Relationships:
+ *     Consumes: UsersService.deleteUserMe API, useAuth (logout)
+ *     Produces: Account deletion, logout, invalidates "currentUser" query cache
+ *
+ * Flow:
+ *     1. Open dialog via "Delete Account" trigger button
+ *     2. Show permanent deletion warning
+ *     3. Call deleteUserMe API on confirm
+ *     4. Show success toast and trigger logout
+ */
 const DeleteConfirmation = () => {
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()

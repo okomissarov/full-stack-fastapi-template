@@ -1,3 +1,13 @@
+/**
+ * @module Items/EditItem
+ *
+ * Purpose: Dialog for editing existing item details.
+ *
+ * Relationships:
+ *     Consumes: ItemsService.updateItem API
+ *     Used by: ItemActionsMenu dropdown
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Pencil } from "lucide-react"
@@ -37,11 +47,36 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Purpose: Props for EditItem dialog component.
+ *
+ * Structure:
+ *     item (ItemPublic): input - Item data to pre-populate form
+ *     onSuccess (function): input - Callback after successful update
+ */
 interface EditItemProps {
   item: ItemPublic
   onSuccess: () => void
 }
 
+/**
+ * Purpose: Modal dialog for editing item title and description.
+ *
+ * Structure:
+ *     item (ItemPublic): input - Existing item data
+ *     onSuccess (function): input - Callback on successful update
+ *     formSchema (zod): Validates required title
+ *
+ * Relationships:
+ *     Consumes: ItemsService.updateItem API
+ *     Produces: Updated item record, success toast, invalidates "items" query cache
+ *
+ * Flow:
+ *     1. Render as dropdown menu item
+ *     2. Open dialog pre-populated with current item data
+ *     3. Validate and submit updated fields
+ *     4. Show success/error toast and invoke onSuccess callback
+ */
 const EditItem = ({ item, onSuccess }: EditItemProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()

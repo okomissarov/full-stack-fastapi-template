@@ -1,3 +1,27 @@
+"""
+Purpose: Provide email rendering, sending, and password reset token utilities
+
+Structure:
+    EmailData (dataclass): schema - Email content container (html_content, subject)
+    render_email_template (func): output - Render Jinja2 HTML email from template file
+    send_email (func): output - Send email via SMTP
+    generate_test_email (func): output - Build test email content
+    generate_reset_password_email (func): output - Build password reset email with token link
+    generate_new_account_email (func): output - Build new account welcome email
+    generate_password_reset_token (func): output - Create JWT token for password reset
+    verify_password_reset_token (func): output - Decode and validate password reset JWT
+
+Relationships:
+    Consumes: core.config.settings (SMTP_*, EMAILS_*, FRONTEND_HOST, SECRET_KEY)
+    Consumes: email-templates/build/*.html (Jinja2 templates)
+    Produces: EmailData, JWT tokens (consumed by api.routes.login)
+
+Semantics:
+    Domain: communication
+    Logic: [Reset tokens expire per EMAIL_RESET_TOKEN_EXPIRE_HOURS,
+            SMTP TLS/SSL configured from settings, templates in email-templates/build/]
+"""
+
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -18,11 +42,13 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class EmailData:
+    """Purpose: Container for rendered email content and subject"""
     html_content: str
     subject: str
 
 
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:
+    """Purpose: Render Jinja2 HTML email template from email-templates/build/"""
     template_str = (
         Path(__file__).parent / "email-templates" / "build" / template_name
     ).read_text()
@@ -36,6 +62,12 @@ def send_email(
     subject: str = "",
     html_content: str = "",
 ) -> None:
+    """
+    Purpose: Send email via configured SMTP server
+
+    Important:
+        Asserts emails_enabled — will raise if SMTP not configured.
+    """
     assert settings.emails_enabled, "no provided configuration for email variables"
     message = emails.Message(
         subject=subject,
@@ -56,6 +88,7 @@ def send_email(
 
 
 def generate_test_email(email_to: str) -> EmailData:
+    """Purpose: Build test email content for SMTP verification"""
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Test email"
     html_content = render_email_template(
@@ -66,6 +99,7 @@ def generate_test_email(email_to: str) -> EmailData:
 
 
 def generate_reset_password_email(email_to: str, email: str, token: str) -> EmailData:
+    """Purpose: Build password reset email with frontend reset link"""
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Password recovery for user {email}"
     link = f"{settings.FRONTEND_HOST}/reset-password?token={token}"
@@ -85,6 +119,7 @@ def generate_reset_password_email(email_to: str, email: str, token: str) -> Emai
 def generate_new_account_email(
     email_to: str, username: str, password: str
 ) -> EmailData:
+    """Purpose: Build welcome email for newly created accounts"""
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - New account for user {username}"
     html_content = render_email_template(
@@ -101,6 +136,7 @@ def generate_new_account_email(
 
 
 def generate_password_reset_token(email: str) -> str:
+    """Purpose: Create JWT token for password reset with configured expiration"""
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
     now = datetime.now(timezone.utc)
     expires = now + delta
@@ -114,6 +150,12 @@ def generate_password_reset_token(email: str) -> str:
 
 
 def verify_password_reset_token(token: str) -> str | None:
+    """
+    Purpose: Decode and validate password reset JWT, returning email if valid
+
+    Returns:
+        str: Email from token subject, or None if token invalid/expired
+    """
     try:
         decoded_token = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]

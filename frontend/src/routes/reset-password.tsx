@@ -1,3 +1,8 @@
+/**
+ * @file Reset password route — sets new password using token from recovery email.
+ * @module routes/reset-password
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import {
@@ -25,10 +30,12 @@ import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
+/** Search params schema: extracts reset token from URL query string. */
 const searchSchema = z.object({
   token: z.string().catch(""),
 })
 
+/** Zod schema for reset form: new_password + confirm_password with match refinement. */
 const formSchema = z
   .object({
     new_password: z
@@ -46,6 +53,10 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Route config for /reset-password. Requires token in search params.
+ * Redirects to / if authenticated, to /login if token missing.
+ */
 export const Route = createFileRoute("/reset-password")({
   component: ResetPassword,
   validateSearch: searchSchema,
@@ -66,6 +77,25 @@ export const Route = createFileRoute("/reset-password")({
   }),
 })
 
+/**
+ * Purpose: Reset password page — sets new password using token from recovery email
+ *
+ * Structure:
+ *     token (string): input - Reset token from URL search params
+ *     new_password (string): input - New password (min 8 chars)
+ *     confirm_password (string): input - Password confirmation (must match)
+ *
+ * Relationships:
+ *     Consumes: LoginService.resetPassword API, URL search param token
+ *     Produces: Password updated, redirect to /login on success
+ *
+ * Flow:
+ *     1. Extract token from URL search params
+ *     2. Render new password + confirm password form
+ *     3. Validate via Zod (including match check)
+ *     4. Call resetPassword API with token + new password
+ *     5. Show success toast, redirect to /login
+ */
 function ResetPassword() {
   const { token } = Route.useSearch()
   const { showSuccessToast, showErrorToast } = useCustomToast()

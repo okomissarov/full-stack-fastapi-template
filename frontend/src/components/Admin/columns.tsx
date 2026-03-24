@@ -1,3 +1,13 @@
+/**
+ * @module Admin/columns
+ *
+ * Purpose: Column definitions for the admin users data table.
+ *
+ * Relationships:
+ *     Consumes: UserActionsMenu component, UserPublic type
+ *     Used by: Admin users page DataTable
+ */
+
 import type { ColumnDef } from "@tanstack/react-table"
 
 import type { UserPublic } from "@/client"
@@ -5,10 +15,30 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { UserActionsMenu } from "./UserActionsMenu"
 
+/**
+ * Purpose: Extended user type with current-user indicator for table rendering.
+ *
+ * Structure:
+ *     isCurrentUser (boolean): Flags whether this row represents the logged-in user
+ */
 export type UserTableData = UserPublic & {
   isCurrentUser: boolean
 }
 
+/**
+ * Purpose: TanStack Table column definitions for the admin users table.
+ *
+ * Structure:
+ *     full_name: Displays name with "You" badge for current user
+ *     email: User email address
+ *     is_superuser: Role badge (Superuser/User)
+ *     is_active: Status indicator with colored dot
+ *     actions: UserActionsMenu dropdown
+ *
+ * Relationships:
+ *     Consumes: UserActionsMenu component
+ *     Used by: Admin page DataTable
+ */
 export const columns: ColumnDef<UserTableData>[] = [
   {
     accessorKey: "full_name",

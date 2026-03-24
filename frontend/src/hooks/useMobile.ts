@@ -1,7 +1,23 @@
+/**
+ * @file Mobile detection hook — responsive breakpoint observer.
+ * @module hooks/useMobile
+ */
+
 import * as React from "react"
 
+/** Breakpoint threshold in pixels for mobile detection. */
 const MOBILE_BREAKPOINT = 768
 
+/**
+ * Purpose: Detect if viewport is below mobile breakpoint (768px)
+ *
+ * Structure:
+ *     isMobile (boolean): output - True if window width < 768px
+ *
+ * Relationships:
+ *     Consumes: window.matchMedia API
+ *     Produces: Reactive mobile state (used by layout/sidebar components)
+ */
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 

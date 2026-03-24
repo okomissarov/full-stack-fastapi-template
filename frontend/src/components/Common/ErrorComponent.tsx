@@ -1,6 +1,21 @@
+/**
+ * @module Common/ErrorComponent
+ *
+ * Purpose: Generic error page displayed when an unhandled error occurs.
+ *
+ * Relationships:
+ *     Used by: Router error boundary
+ */
+
 import { Link } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 
+/**
+ * Purpose: Full-screen error page with "Go Home" navigation link.
+ *
+ * Relationships:
+ *     Produces: Navigation to root route via Link
+ */
 const ErrorComponent = () => {
   return (
     <div

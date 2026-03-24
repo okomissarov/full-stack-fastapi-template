@@ -1,3 +1,13 @@
+/**
+ * @module Admin/EditUser
+ *
+ * Purpose: Dialog for editing existing user account details.
+ *
+ * Relationships:
+ *     Consumes: UsersService.updateUser API
+ *     Used by: UserActionsMenu dropdown
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Pencil } from "lucide-react"
@@ -51,11 +61,37 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Purpose: Props for EditUser dialog component.
+ *
+ * Structure:
+ *     user (UserPublic): input - User data to pre-populate form
+ *     onSuccess (function): input - Callback after successful update
+ */
 interface EditUserProps {
   user: UserPublic
   onSuccess: () => void
 }
 
+/**
+ * Purpose: Modal dialog for editing user details (email, name, password, role, status).
+ *
+ * Structure:
+ *     user (UserPublic): input - Existing user data
+ *     onSuccess (function): input - Callback on successful update
+ *     formSchema (zod): Validates email, optional password match, superuser/active flags
+ *
+ * Relationships:
+ *     Consumes: UsersService.updateUser API
+ *     Produces: Updated user record, success toast, invalidates "users" query cache
+ *
+ * Flow:
+ *     1. Render as dropdown menu item
+ *     2. Open dialog pre-populated with current user data
+ *     3. Validate and strip empty password before submit
+ *     4. Call updateUser API
+ *     5. Show success/error toast and invoke onSuccess callback
+ */
 const EditUser = ({ user, onSuccess }: EditUserProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()

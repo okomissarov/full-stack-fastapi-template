@@ -1,3 +1,12 @@
+/**
+ * @module Common/DataTable
+ *
+ * Purpose: Generic paginated data table component built on TanStack Table.
+ *
+ * Relationships:
+ *     Consumes: TanStack Table core and pagination models
+ *     Used by: Admin users page, Items page
+ */
 import {
   type ColumnDef,
   flexRender,
@@ -29,11 +38,35 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+/**
+ * Purpose: Props for the generic DataTable component.
+ *
+ * Structure:
+ *     columns (ColumnDef[]): input - Column definitions for the table
+ *     data (TData[]): input - Row data array
+ */
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
+/**
+ * Purpose: Reusable paginated data table with configurable columns and page size.
+ *
+ * Structure:
+ *     columns (ColumnDef[]): input - Column definitions
+ *     data (TData[]): input - Row data
+ *
+ * Relationships:
+ *     Consumes: TanStack Table (getCoreRowModel, getPaginationRowModel)
+ *     Used by: Admin users page, Items page
+ *
+ * Flow:
+ *     1. Initialize table with data and column definitions
+ *     2. Render header groups and data rows
+ *     3. Show "No results" when empty
+ *     4. Render pagination controls when multiple pages exist
+ */
 export function DataTable<TData, TValue>({
   columns,
   data,

@@ -1,3 +1,26 @@
+/**
+ * @file Application entry point — initializes React with router, query client, theme, and API auth.
+ * @module main
+ */
+
+/**
+ * Purpose: Initialize React application with router, query client, theme, and API auth
+ *
+ * Structure:
+ *     OpenAPI.BASE (config): input - API base URL from VITE_API_URL env var
+ *     OpenAPI.TOKEN (config): input - JWT token from localStorage
+ *     queryClient (QueryClient): config - TanStack Query client with auth error handling
+ *     router (Router): config - TanStack Router from generated route tree
+ *
+ * Relationships:
+ *     Consumes: client/OpenAPI, routeTree.gen, theme-provider, sonner
+ *     Produces: Rendered React app in #root DOM element
+ *
+ * Semantics:
+ *     Logic: [401/403 API errors clear token and redirect to /login,
+ *             Dark theme default, strict mode enabled]
+ */
+
 import {
   MutationCache,
   QueryCache,
@@ -18,6 +41,7 @@ OpenAPI.TOKEN = async () => {
   return localStorage.getItem("access_token") || ""
 }
 
+/** Clear token and redirect to /login on 401/403 API errors. */
 const handleApiError = (error: Error) => {
   if (error instanceof ApiError && [401, 403].includes(error.status)) {
     localStorage.removeItem("access_token")

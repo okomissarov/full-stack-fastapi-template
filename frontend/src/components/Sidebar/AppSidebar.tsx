@@ -1,3 +1,13 @@
+/**
+ * @module Sidebar/AppSidebar
+ *
+ * Purpose: Main application sidebar with navigation, theme toggle, and user menu.
+ *
+ * Relationships:
+ *     Consumes: Main, User, SidebarAppearance, Logo components; useAuth hook
+ *     Used by: Authenticated layout shell
+ */
+
 import { Briefcase, Home, Users } from "lucide-react"
 
 import { SidebarAppearance } from "@/components/Common/Appearance"
@@ -17,6 +27,21 @@ const baseItems: Item[] = [
   { icon: Briefcase, title: "Items", path: "/items" },
 ]
 
+/**
+ * Purpose: Collapsible sidebar with navigation items, appearance toggle, and user menu.
+ *
+ * Structure:
+ *     baseItems: Dashboard and Items nav links
+ *     Admin link: Conditionally added for superusers
+ *
+ * Relationships:
+ *     Consumes: useAuth (current user/superuser check), Main, User, SidebarAppearance, Logo
+ *     Used by: Authenticated app layout
+ *
+ * Flow:
+ *     1. Determine nav items based on superuser status
+ *     2. Render Logo in header, Main nav in content, Appearance + User in footer
+ */
 export function AppSidebar() {
   const { user: currentUser } = useAuth()
 

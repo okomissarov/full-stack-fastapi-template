@@ -1,3 +1,13 @@
+/**
+ * @module UserSettings/ChangePassword
+ *
+ * Purpose: Form for changing the current user's password.
+ *
+ * Relationships:
+ *     Consumes: UsersService.updatePasswordMe API
+ *     Used by: User settings page
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
@@ -38,6 +48,22 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>
 
+/**
+ * Purpose: Password change form with current, new, and confirm password fields.
+ *
+ * Structure:
+ *     formSchema (zod): Validates min 8 chars, password match
+ *
+ * Relationships:
+ *     Consumes: UsersService.updatePasswordMe API
+ *     Produces: Success toast, form reset on success
+ *
+ * Flow:
+ *     1. Render current password, new password, confirm password fields
+ *     2. Validate password match and minimum length
+ *     3. Call updatePasswordMe API on submit
+ *     4. Show success/error toast and reset form
+ */
 const ChangePassword = () => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const form = useForm<FormData>({
