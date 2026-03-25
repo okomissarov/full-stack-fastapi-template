@@ -101,6 +101,42 @@ pip install skill-sdk-aila
 
 ## Agenda
 
+### Part 0: AILA SDK Bootstrap (15 min)
+
+**Goal:** Set up the AILA development environment and verify all dependencies.
+
+#### 0.1 Clone aila-kiro-home
+```bash
+git clone git@gitlab.dataart.com:da/dalf/aila-kiro-home.git
+cd aila-kiro-home
+```
+
+#### 0.2 Bootstrap AILA SDK
+Follow the bootstrap instructions to install and verify dependencies:
+```bash
+cat AILA-SKILLS-BOOTSTRAP.md
+```
+
+This sets up:
+- `skill-sdk-aila` — AILA Catalog SDK (metadata extraction, skill discovery)
+- `aila-catalog-schema` — workspace and agent configuration types
+- Global Kiro steering and settings
+
+#### 0.3 Verify
+```bash
+python3 -c "from skill_sdk_aila import aila_self_diagnostics; print(aila_self_diagnostics())"
+```
+
+#### 0.4 Clone Workshop Repo
+```bash
+cd ..
+git clone https://github.com/okomissarov/full-stack-fastapi-template.git
+cd full-stack-fastapi-template
+python3 workspace.py validate
+```
+
+---
+
 ### Part 1: KNOW.md and Code Knowledge (30 min)
 
 **Goal:** Understand how auto-generated code metadata makes AI agents faster and more accurate.
