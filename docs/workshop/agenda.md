@@ -12,6 +12,93 @@ The JIRA epic (AWSP-114) with 7 stories and acceptance criteria is already creat
 
 ---
 
+## Prerequisites (Complete Before Workshop)
+
+### 1. Development Environment
+
+#### Python 3.10+
+
+macOS:
+```bash
+brew install python
+```
+
+Windows:
+```bash
+winget install Python.Python.3
+```
+
+Linux:
+```bash
+sudo apt update
+sudo apt install python3 python3-pip
+```
+
+Verify:
+```bash
+python3 --version  # Should be 3.10 or higher
+```
+
+#### Node.js 18+
+
+macOS:
+```bash
+brew install node
+```
+
+Windows:
+```bash
+winget install OpenJS.NodeJS
+```
+
+Linux:
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install nodejs
+```
+
+Verify:
+```bash
+node --version  # Should be 18 or higher
+npm --version
+```
+
+#### Git
+
+Verify:
+```bash
+git --version
+```
+
+### 2. Kiro CLI
+
+Install Kiro CLI following the official instructions. Verify:
+```bash
+kiro --version
+```
+
+### 3. Access Verification
+
+Verify you can access:
+- [ ] https://gitlab.dataart.com/da/dalf — GitLab repository access
+- [ ] https://github.com/okomissarov/full-stack-fastapi-template — workshop repo (public)
+- [ ] https://github.com/fastapi/full-stack-fastapi-template — original repo for comparison (public)
+
+### 4. Clone Workshop Repo
+
+```bash
+git clone https://github.com/okomissarov/full-stack-fastapi-template.git
+cd full-stack-fastapi-template
+```
+
+### 5. Install skill-sdk-aila (Optional, for home assignment)
+
+```bash
+pip install skill-sdk-aila
+```
+
+---
+
 ## Agenda
 
 ### Part 1: KNOW.md and Code Knowledge (30 min)
