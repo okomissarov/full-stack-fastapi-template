@@ -74,8 +74,12 @@ curl -fsSL https://kiro.dev/install.sh | bash
 ### Login to Kiro
 
 ```bash
-kiro-cli login --region us-east-1 --start-url https://dataart.awsapps.com/start/#
+kiro-cli login
 ```
+
+when prompted, provide:
+- region: us-east-1 
+- start-url https://dataart.awsapps.com/start/#
 
 This opens a browser for authentication. Log in with your DataArt credentials and authorize the access.
 
