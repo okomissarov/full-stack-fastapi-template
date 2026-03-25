@@ -94,7 +94,8 @@ export const ItemCreateSchema = {
     },
     type: 'object',
     required: ['title'],
-    title: 'ItemCreate'
+    title: 'ItemCreate',
+    description: 'Purpose: Schema for item creation'
 } as const;
 
 export const ItemPublicSchema = {
@@ -142,7 +143,8 @@ export const ItemPublicSchema = {
     },
     type: 'object',
     required: ['title', 'id', 'owner_id'],
-    title: 'ItemPublic'
+    title: 'ItemPublic',
+    description: 'Purpose: Item response schema with owner reference'
 } as const;
 
 export const ItemUpdateSchema = {
@@ -174,7 +176,8 @@ export const ItemUpdateSchema = {
         }
     },
     type: 'object',
-    title: 'ItemUpdate'
+    title: 'ItemUpdate',
+    description: 'Purpose: Schema for item update (all fields optional)'
 } as const;
 
 export const ItemsPublicSchema = {
@@ -193,7 +196,8 @@ export const ItemsPublicSchema = {
     },
     type: 'object',
     required: ['data', 'count'],
-    title: 'ItemsPublic'
+    title: 'ItemsPublic',
+    description: 'Purpose: Paginated item list response'
 } as const;
 
 export const MessageSchema = {
@@ -205,7 +209,8 @@ export const MessageSchema = {
     },
     type: 'object',
     required: ['message'],
-    title: 'Message'
+    title: 'Message',
+    description: 'Purpose: Generic API message response'
 } as const;
 
 export const NewPasswordSchema = {
@@ -223,7 +228,8 @@ export const NewPasswordSchema = {
     },
     type: 'object',
     required: ['token', 'new_password'],
-    title: 'NewPassword'
+    title: 'NewPassword',
+    description: 'Purpose: Schema for token-based password reset'
 } as const;
 
 export const PrivateUserCreateSchema = {
@@ -248,7 +254,376 @@ export const PrivateUserCreateSchema = {
     },
     type: 'object',
     required: ['email', 'password', 'full_name'],
-    title: 'PrivateUserCreate'
+    title: 'PrivateUserCreate',
+    description: `Purpose: Schema for private user creation (bypasses SQLModel validation)
+
+Structure:
+    email (str): input - User email
+    password (str): input - Plain text password
+    full_name (str): input - User display name
+    is_verified (bool): input - Verification status (default False)`
+} as const;
+
+export const ProjectCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        status: {
+            type: 'string',
+            maxLength: 50,
+            title: 'Status',
+            default: 'active'
+        }
+    },
+    type: 'object',
+    required: ['name'],
+    title: 'ProjectCreate',
+    description: 'Purpose: Schema for project creation'
+} as const;
+
+export const ProjectPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        status: {
+            type: 'string',
+            maxLength: 50,
+            title: 'Status',
+            default: 'active'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        owner_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Owner Id'
+        },
+        created_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'owner_id'],
+    title: 'ProjectPublic',
+    description: 'Purpose: Project response schema with owner reference'
+} as const;
+
+export const ProjectUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        status: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 50
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Status'
+        }
+    },
+    type: 'object',
+    title: 'ProjectUpdate',
+    description: 'Purpose: Schema for project update (all fields optional)'
+} as const;
+
+export const ProjectsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/ProjectPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'ProjectsPublic',
+    description: 'Purpose: Paginated project list response'
+} as const;
+
+export const TimeEntriesPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/TimeEntryPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'TimeEntriesPublic',
+    description: 'Purpose: Paginated time entry list response'
+} as const;
+
+export const TimeEntryCreateSchema = {
+    properties: {
+        date: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Date'
+        },
+        hours: {
+            type: 'number',
+            maximum: 24,
+            minimum: 0.25,
+            title: 'Hours'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        billable: {
+            type: 'boolean',
+            title: 'Billable',
+            default: true
+        },
+        project_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Project Id'
+        }
+    },
+    type: 'object',
+    required: ['date', 'hours', 'project_id'],
+    title: 'TimeEntryCreate',
+    description: 'Purpose: Schema for time entry creation'
+} as const;
+
+export const TimeEntryPublicSchema = {
+    properties: {
+        date: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Date'
+        },
+        hours: {
+            type: 'number',
+            maximum: 24,
+            minimum: 0.25,
+            title: 'Hours'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        billable: {
+            type: 'boolean',
+            title: 'Billable',
+            default: true
+        },
+        project_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Project Id'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        owner_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Owner Id'
+        },
+        created_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['date', 'hours', 'project_id', 'id', 'owner_id'],
+    title: 'TimeEntryPublic',
+    description: 'Purpose: TimeEntry response schema with owner and project references'
+} as const;
+
+export const TimeEntrySummarySchema = {
+    properties: {
+        project_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Project Id'
+        },
+        project_name: {
+            type: 'string',
+            title: 'Project Name'
+        },
+        total_hours: {
+            type: 'number',
+            title: 'Total Hours'
+        }
+    },
+    type: 'object',
+    required: ['project_id', 'project_name', 'total_hours'],
+    title: 'TimeEntrySummary'
+} as const;
+
+export const TimeEntryUpdateSchema = {
+    properties: {
+        date: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Date'
+        },
+        hours: {
+            anyOf: [
+                {
+                    type: 'number',
+                    maximum: 24,
+                    minimum: 0.25
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Hours'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        billable: {
+            type: 'boolean',
+            title: 'Billable',
+            default: true
+        },
+        project_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Project Id'
+        }
+    },
+    type: 'object',
+    title: 'TimeEntryUpdate',
+    description: 'Purpose: Schema for time entry update (all fields optional)'
 } as const;
 
 export const TokenSchema = {
@@ -265,7 +640,8 @@ export const TokenSchema = {
     },
     type: 'object',
     required: ['access_token'],
-    title: 'Token'
+    title: 'Token',
+    description: 'Purpose: JWT access token response'
 } as const;
 
 export const UpdatePasswordSchema = {
@@ -285,7 +661,8 @@ export const UpdatePasswordSchema = {
     },
     type: 'object',
     required: ['current_password', 'new_password'],
-    title: 'UpdatePassword'
+    title: 'UpdatePassword',
+    description: 'Purpose: Schema for authenticated password change'
 } as const;
 
 export const UserCreateSchema = {
@@ -327,7 +704,8 @@ export const UserCreateSchema = {
     },
     type: 'object',
     required: ['email', 'password'],
-    title: 'UserCreate'
+    title: 'UserCreate',
+    description: 'Purpose: Schema for admin user creation (includes role flags from UserBase)'
 } as const;
 
 export const UserPublicSchema = {
@@ -380,7 +758,8 @@ export const UserPublicSchema = {
     },
     type: 'object',
     required: ['email', 'id'],
-    title: 'UserPublic'
+    title: 'UserPublic',
+    description: 'Purpose: User response schema (excludes hashed_password)'
 } as const;
 
 export const UserRegisterSchema = {
@@ -412,7 +791,8 @@ export const UserRegisterSchema = {
     },
     type: 'object',
     required: ['email', 'password'],
-    title: 'UserRegister'
+    title: 'UserRegister',
+    description: 'Purpose: Schema for public self-registration (no role flags)'
 } as const;
 
 export const UserUpdateSchema = {
@@ -467,7 +847,8 @@ export const UserUpdateSchema = {
         }
     },
     type: 'object',
-    title: 'UserUpdate'
+    title: 'UserUpdate',
+    description: 'Purpose: Schema for admin user update (all fields optional)'
 } as const;
 
 export const UserUpdateMeSchema = {
@@ -499,7 +880,8 @@ export const UserUpdateMeSchema = {
         }
     },
     type: 'object',
-    title: 'UserUpdateMe'
+    title: 'UserUpdateMe',
+    description: 'Purpose: Schema for self-profile update (name and email only)'
 } as const;
 
 export const UsersPublicSchema = {
@@ -518,7 +900,8 @@ export const UsersPublicSchema = {
     },
     type: 'object',
     required: ['data', 'count'],
-    title: 'UsersPublic'
+    title: 'UsersPublic',
+    description: 'Purpose: Paginated user list response'
 } as const;
 
 export const ValidationErrorSchema = {

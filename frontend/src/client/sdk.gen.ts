@@ -3,12 +3,28 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ProjectsReadProjectsData, ProjectsReadProjectsResponse, ProjectsCreateProjectData, ProjectsCreateProjectResponse, ProjectsReadProjectData, ProjectsReadProjectResponse, ProjectsUpdateProjectData, ProjectsUpdateProjectResponse, ProjectsDeleteProjectData, ProjectsDeleteProjectResponse, TimeEntriesReadTimeEntriesSummaryData, TimeEntriesReadTimeEntriesSummaryResponse, TimeEntriesReadTimeEntriesData, TimeEntriesReadTimeEntriesResponse, TimeEntriesCreateTimeEntryData, TimeEntriesCreateTimeEntryResponse, TimeEntriesReadTimeEntryData, TimeEntriesReadTimeEntryResponse, TimeEntriesUpdateTimeEntryData, TimeEntriesUpdateTimeEntryResponse, TimeEntriesDeleteTimeEntryData, TimeEntriesDeleteTimeEntryResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
 export class ItemsService {
     /**
      * Read Items
-     * Retrieve items.
+     * Purpose: Retrieve paginated list of items for current user
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated user
+     * skip (int): input - Pagination offset
+     * limit (int): input - Max items per page
+     * items (ItemsPublic): output - Paginated items list with count
+     *
+     * Relationships:
+     * Consumes: Item table, current user context
+     * Produces: ItemsPublic response
+     *
+     * Flow:
+     * 1. Check if superuser (query all) or regular user (query owned only)
+     * 2. Count matching items and fetch paginated results
+     * 3. Return ItemsPublic with data and count
      * @param data The data for the request.
      * @param data.skip
      * @param data.limit
@@ -31,7 +47,22 @@ export class ItemsService {
     
     /**
      * Create Item
-     * Create new item.
+     * Purpose: Create a new item owned by the current user
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated user
+     * item_in (ItemCreate): input - Item creation payload
+     * item (ItemPublic): output - Created item
+     *
+     * Relationships:
+     * Consumes: ItemCreate schema, current user context
+     * Produces: Item table row, ItemPublic response
+     *
+     * Flow:
+     * 1. Validate input and set owner_id to current user
+     * 2. Persist item to database
+     * 3. Return created item
      * @param data The data for the request.
      * @param data.requestBody
      * @returns ItemPublic Successful Response
@@ -51,7 +82,22 @@ export class ItemsService {
     
     /**
      * Read Item
-     * Get item by ID.
+     * Purpose: Retrieve a single item by ID with ownership check
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated user
+     * id (uuid.UUID): input - Item ID
+     * item (ItemPublic): output - Item details
+     *
+     * Relationships:
+     * Consumes: Item table, current user context
+     * Produces: ItemPublic response
+     *
+     * Flow:
+     * 1. Fetch item by ID, raise 404 if not found
+     * 2. Verify ownership or superuser role, raise 403 if denied
+     * 3. Return item
      * @param data The data for the request.
      * @param data.id
      * @returns ItemPublic Successful Response
@@ -72,7 +118,23 @@ export class ItemsService {
     
     /**
      * Update Item
-     * Update an item.
+     * Purpose: Update an existing item with ownership check
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated user
+     * id (uuid.UUID): input - Item ID
+     * item_in (ItemUpdate): input - Partial update payload
+     * item (ItemPublic): output - Updated item
+     *
+     * Relationships:
+     * Consumes: Item table, ItemUpdate schema, current user context
+     * Produces: Updated Item table row, ItemPublic response
+     *
+     * Flow:
+     * 1. Fetch item by ID, raise 404 if not found
+     * 2. Verify ownership or superuser role, raise 403 if denied
+     * 3. Apply partial update and persist
      * @param data The data for the request.
      * @param data.id
      * @param data.requestBody
@@ -96,7 +158,22 @@ export class ItemsService {
     
     /**
      * Delete Item
-     * Delete an item.
+     * Purpose: Delete an item with ownership check
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated user
+     * id (uuid.UUID): input - Item ID
+     * message (Message): output - Deletion confirmation
+     *
+     * Relationships:
+     * Consumes: Item table, current user context
+     * Produces: Message response
+     *
+     * Flow:
+     * 1. Fetch item by ID, raise 404 if not found
+     * 2. Verify ownership or superuser role, raise 403 if denied
+     * 3. Delete item and return confirmation
      * @param data The data for the request.
      * @param data.id
      * @returns Message Successful Response
@@ -119,7 +196,21 @@ export class ItemsService {
 export class LoginService {
     /**
      * Login Access Token
-     * OAuth2 compatible token login, get an access token for future requests
+     * Purpose: Authenticate user via email/password and return JWT access token
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * form_data (OAuth2PasswordRequestForm): input - Username (email) and password
+     * token (Token): output - JWT access token
+     *
+     * Relationships:
+     * Consumes: crud.authenticate, core.security.create_access_token
+     * Produces: Token response
+     *
+     * Flow:
+     * 1. Authenticate user via crud, raise 400 if invalid credentials
+     * 2. Raise 400 if user is inactive
+     * 3. Create and return JWT access token with configured expiry
      * @param data The data for the request.
      * @param data.formData
      * @returns Token Successful Response
@@ -139,7 +230,15 @@ export class LoginService {
     
     /**
      * Test Token
-     * Test access token
+     * Purpose: Validate access token and return current user profile
+     *
+     * Structure:
+     * current_user (CurrentUser): input - Authenticated user from token
+     * user (UserPublic): output - Current user profile
+     *
+     * Relationships:
+     * Consumes: CurrentUser dependency (validates token implicitly)
+     * Produces: UserPublic response
      * @returns UserPublic Successful Response
      * @throws ApiError
      */
@@ -152,7 +251,21 @@ export class LoginService {
     
     /**
      * Recover Password
-     * Password Recovery
+     * Purpose: Send password recovery email if user exists
+     *
+     * Structure:
+     * email (str): input - User email address
+     * session (SessionDep): input - Database session
+     * message (Message): output - Generic confirmation message
+     *
+     * Relationships:
+     * Consumes: crud.get_user_by_email, utils.generate_password_reset_token, utils.send_email
+     * Produces: Message response, password reset email
+     *
+     * Flow:
+     * 1. Look up user by email
+     * 2. If found, generate reset token and send recovery email
+     * 3. Return same message regardless of email existence (prevents enumeration)
      * @param data The data for the request.
      * @param data.email
      * @returns Message Successful Response
@@ -173,7 +286,21 @@ export class LoginService {
     
     /**
      * Reset Password
-     * Reset password
+     * Purpose: Reset user password using a recovery token
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * body (NewPassword): input - Reset token and new password
+     * message (Message): output - Success confirmation
+     *
+     * Relationships:
+     * Consumes: utils.verify_password_reset_token, crud.get_user_by_email, crud.update_user
+     * Produces: Message response, updated password hash in User table
+     *
+     * Flow:
+     * 1. Verify reset token and extract email, raise 400 if invalid
+     * 2. Look up user by email, raise 400 if not found or inactive
+     * 3. Update password hash and return confirmation
      * @param data The data for the request.
      * @param data.requestBody
      * @returns Message Successful Response
@@ -193,7 +320,21 @@ export class LoginService {
     
     /**
      * Recover Password Html Content
-     * HTML Content for Password Recovery
+     * Purpose: Preview password recovery email HTML content (superuser only)
+     *
+     * Structure:
+     * email (str): input - Target user email
+     * session (SessionDep): input - Database session
+     * html (HTMLResponse): output - Rendered email HTML
+     *
+     * Relationships:
+     * Consumes: crud.get_user_by_email, utils.generate_password_reset_token, utils.generate_reset_password_email
+     * Produces: HTMLResponse with email content and subject header
+     *
+     * Flow:
+     * 1. Look up user by email, raise 404 if not found
+     * 2. Generate reset token and email content
+     * 3. Return HTML response with subject in headers
      * @param data The data for the request.
      * @param data.email
      * @returns string Successful Response
@@ -216,7 +357,21 @@ export class LoginService {
 export class PrivateService {
     /**
      * Create User
-     * Create a new user.
+     * Purpose: Create user directly without email uniqueness check (local dev only)
+     *
+     * Structure:
+     * user_in (PrivateUserCreate): input - User creation payload
+     * session (SessionDep): input - Database session
+     * user (UserPublic): output - Created user
+     *
+     * Relationships:
+     * Consumes: PrivateUserCreate schema, core.security.get_password_hash
+     * Produces: User table row, UserPublic response
+     *
+     * Flow:
+     * 1. Build User model with hashed password
+     * 2. Persist to database
+     * 3. Return created user
      * @param data The data for the request.
      * @param data.requestBody
      * @returns UserPublic Successful Response
@@ -235,10 +390,265 @@ export class PrivateService {
     }
 }
 
+export class ProjectsService {
+    /**
+     * Read Projects
+     * Retrieve projects.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns ProjectsPublic Successful Response
+     * @throws ApiError
+     */
+    public static readProjects(data: ProjectsReadProjectsData = {}): CancelablePromise<ProjectsReadProjectsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Project
+     * Create new project.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ProjectPublic Successful Response
+     * @throws ApiError
+     */
+    public static createProject(data: ProjectsCreateProjectData): CancelablePromise<ProjectsCreateProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/projects/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Project
+     * Get project by ID.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ProjectPublic Successful Response
+     * @throws ApiError
+     */
+    public static readProject(data: ProjectsReadProjectData): CancelablePromise<ProjectsReadProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/projects/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Project
+     * Update a project.
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns ProjectPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateProject(data: ProjectsUpdateProjectData): CancelablePromise<ProjectsUpdateProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/projects/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Project
+     * Delete a project.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteProject(data: ProjectsDeleteProjectData): CancelablePromise<ProjectsDeleteProjectResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/projects/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class TimeEntriesService {
+    /**
+     * Read Time Entries Summary
+     * Return hours grouped by project for current user.
+     * @param data The data for the request.
+     * @param data.startDate
+     * @param data.endDate
+     * @returns TimeEntrySummary Successful Response
+     * @throws ApiError
+     */
+    public static readTimeEntriesSummary(data: TimeEntriesReadTimeEntriesSummaryData = {}): CancelablePromise<TimeEntriesReadTimeEntriesSummaryResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/time-entries/summary',
+            query: {
+                start_date: data.startDate,
+                end_date: data.endDate
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Time Entries
+     * Retrieve time entries.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns TimeEntriesPublic Successful Response
+     * @throws ApiError
+     */
+    public static readTimeEntries(data: TimeEntriesReadTimeEntriesData = {}): CancelablePromise<TimeEntriesReadTimeEntriesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/time-entries/',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Time Entry
+     * Create new time entry.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns TimeEntryPublic Successful Response
+     * @throws ApiError
+     */
+    public static createTimeEntry(data: TimeEntriesCreateTimeEntryData): CancelablePromise<TimeEntriesCreateTimeEntryResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/time-entries/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Time Entry
+     * Get time entry by ID.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns TimeEntryPublic Successful Response
+     * @throws ApiError
+     */
+    public static readTimeEntry(data: TimeEntriesReadTimeEntryData): CancelablePromise<TimeEntriesReadTimeEntryResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/time-entries/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Time Entry
+     * Update a time entry.
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns TimeEntryPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateTimeEntry(data: TimeEntriesUpdateTimeEntryData): CancelablePromise<TimeEntriesUpdateTimeEntryResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/time-entries/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Time Entry
+     * Delete a time entry.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteTimeEntry(data: TimeEntriesDeleteTimeEntryData): CancelablePromise<TimeEntriesDeleteTimeEntryResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/time-entries/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
 export class UsersService {
     /**
      * Read Users
-     * Retrieve users.
+     * Purpose: Retrieve paginated list of all users (superuser only)
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * skip (int): input - Pagination offset
+     * limit (int): input - Max users per page
+     * users (UsersPublic): output - Paginated users list with count
+     *
+     * Relationships:
+     * Consumes: User table
+     * Produces: UsersPublic response
      * @param data The data for the request.
      * @param data.skip
      * @param data.limit
@@ -261,7 +671,21 @@ export class UsersService {
     
     /**
      * Create User
-     * Create new user.
+     * Purpose: Create a new user (superuser only), send welcome email if SMTP configured
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * user_in (UserCreate): input - User creation payload
+     * user (UserPublic): output - Created user
+     *
+     * Relationships:
+     * Consumes: crud.get_user_by_email, crud.create_user, utils.send_email
+     * Produces: User table row, UserPublic response, welcome email
+     *
+     * Flow:
+     * 1. Check email uniqueness, raise 400 if duplicate
+     * 2. Create user via crud
+     * 3. Send welcome email if SMTP enabled
      * @param data The data for the request.
      * @param data.requestBody
      * @returns UserPublic Successful Response
@@ -281,7 +705,15 @@ export class UsersService {
     
     /**
      * Read User Me
-     * Get current user.
+     * Purpose: Get current authenticated user profile
+     *
+     * Structure:
+     * current_user (CurrentUser): input - Authenticated user
+     * user (UserPublic): output - Current user profile
+     *
+     * Relationships:
+     * Consumes: CurrentUser dependency
+     * Produces: UserPublic response
      * @returns UserPublic Successful Response
      * @throws ApiError
      */
@@ -294,7 +726,16 @@ export class UsersService {
     
     /**
      * Delete User Me
-     * Delete own user.
+     * Purpose: Delete own account (superusers cannot delete themselves)
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated user
+     * message (Message): output - Deletion confirmation
+     *
+     * Relationships:
+     * Consumes: User table
+     * Produces: Message response
      * @returns Message Successful Response
      * @throws ApiError
      */
@@ -307,7 +748,22 @@ export class UsersService {
     
     /**
      * Update User Me
-     * Update own user.
+     * Purpose: Update own profile (name and email)
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * user_in (UserUpdateMe): input - Partial profile update
+     * current_user (CurrentUser): input - Authenticated user
+     * user (UserPublic): output - Updated user profile
+     *
+     * Relationships:
+     * Consumes: crud.get_user_by_email, User table
+     * Produces: Updated User table row, UserPublic response
+     *
+     * Flow:
+     * 1. If email changing, check uniqueness (raise 409 if taken)
+     * 2. Apply partial update to current user
+     * 3. Persist and return updated user
      * @param data The data for the request.
      * @param data.requestBody
      * @returns UserPublic Successful Response
@@ -327,7 +783,22 @@ export class UsersService {
     
     /**
      * Update Password Me
-     * Update own password.
+     * Purpose: Change own password with current password verification
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * body (UpdatePassword): input - Current and new passwords
+     * current_user (CurrentUser): input - Authenticated user
+     * message (Message): output - Success confirmation
+     *
+     * Relationships:
+     * Consumes: core.security.verify_password, core.security.get_password_hash
+     * Produces: Updated password hash in User table, Message response
+     *
+     * Flow:
+     * 1. Verify current password, raise 400 if incorrect
+     * 2. Reject if new password equals current, raise 400
+     * 3. Hash new password, persist, and return confirmation
      * @param data The data for the request.
      * @param data.requestBody
      * @returns Message Successful Response
@@ -347,7 +818,21 @@ export class UsersService {
     
     /**
      * Register User
-     * Create new user without the need to be logged in.
+     * Purpose: Public self-registration (no auth required)
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * user_in (UserRegister): input - Registration payload
+     * user (UserPublic): output - Created user
+     *
+     * Relationships:
+     * Consumes: crud.get_user_by_email, crud.create_user
+     * Produces: User table row, UserPublic response
+     *
+     * Flow:
+     * 1. Check email uniqueness, raise 400 if duplicate
+     * 2. Convert to UserCreate and create user via crud
+     * 3. Return created user
      * @param data The data for the request.
      * @param data.requestBody
      * @returns UserPublic Successful Response
@@ -367,7 +852,22 @@ export class UsersService {
     
     /**
      * Read User By Id
-     * Get a specific user by id.
+     * Purpose: Get user by ID (own profile or superuser only)
+     *
+     * Structure:
+     * user_id (uuid.UUID): input - Target user ID
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated user
+     * user (UserPublic): output - User profile
+     *
+     * Relationships:
+     * Consumes: User table, current user context
+     * Produces: UserPublic response
+     *
+     * Flow:
+     * 1. Fetch user by ID
+     * 2. Return immediately if requesting own profile
+     * 3. Raise 403 if not superuser, raise 404 if user not found
      * @param data The data for the request.
      * @param data.userId
      * @returns UserPublic Successful Response
@@ -388,7 +888,22 @@ export class UsersService {
     
     /**
      * Update User
-     * Update a user.
+     * Purpose: Update a user by ID (superuser only)
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * user_id (uuid.UUID): input - Target user ID
+     * user_in (UserUpdate): input - Partial update payload
+     * user (UserPublic): output - Updated user
+     *
+     * Relationships:
+     * Consumes: crud.get_user_by_email, crud.update_user, User table
+     * Produces: Updated User table row, UserPublic response
+     *
+     * Flow:
+     * 1. Fetch user by ID, raise 404 if not found
+     * 2. If email changing, check uniqueness (raise 409 if taken)
+     * 3. Update user via crud and return
      * @param data The data for the request.
      * @param data.userId
      * @param data.requestBody
@@ -412,7 +927,22 @@ export class UsersService {
     
     /**
      * Delete User
-     * Delete a user.
+     * Purpose: Delete a user and their items (superuser only, cannot self-delete)
+     *
+     * Structure:
+     * session (SessionDep): input - Database session
+     * current_user (CurrentUser): input - Authenticated superuser
+     * user_id (uuid.UUID): input - Target user ID
+     * message (Message): output - Deletion confirmation
+     *
+     * Relationships:
+     * Consumes: User table, Item table
+     * Produces: Message response
+     *
+     * Flow:
+     * 1. Fetch user by ID, raise 404 if not found
+     * 2. Raise 403 if attempting self-deletion
+     * 3. Delete user's items, then delete user
      * @param data The data for the request.
      * @param data.userId
      * @returns Message Successful Response
@@ -435,7 +965,15 @@ export class UsersService {
 export class UtilsService {
     /**
      * Test Email
-     * Test emails.
+     * Purpose: Send test email to verify SMTP configuration (superuser only)
+     *
+     * Structure:
+     * email_to (EmailStr): input - Recipient email address
+     * message (Message): output - Success confirmation
+     *
+     * Relationships:
+     * Consumes: utils.generate_test_email, utils.send_email
+     * Produces: Message response, test email
      * @param data The data for the request.
      * @param data.emailTo
      * @returns Message Successful Response
@@ -456,6 +994,14 @@ export class UtilsService {
     
     /**
      * Health Check
+     * Purpose: Return true if application is running
+     *
+     * Structure:
+     * result (bool): output - Always True
+     *
+     * Relationships:
+     * Consumes: None
+     * Produces: bool response
      * @returns boolean Successful Response
      * @throws ApiError
      */

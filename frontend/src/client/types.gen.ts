@@ -13,11 +13,17 @@ export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
 
+/**
+ * Purpose: Schema for item creation
+ */
 export type ItemCreate = {
     title: string;
     description?: (string | null);
 };
 
+/**
+ * Purpose: Item response schema with owner reference
+ */
 export type ItemPublic = {
     title: string;
     description?: (string | null);
@@ -26,25 +32,46 @@ export type ItemPublic = {
     created_at?: (string | null);
 };
 
+/**
+ * Purpose: Paginated item list response
+ */
 export type ItemsPublic = {
     data: Array<ItemPublic>;
     count: number;
 };
 
+/**
+ * Purpose: Schema for item update (all fields optional)
+ */
 export type ItemUpdate = {
     title?: (string | null);
     description?: (string | null);
 };
 
+/**
+ * Purpose: Generic API message response
+ */
 export type Message = {
     message: string;
 };
 
+/**
+ * Purpose: Schema for token-based password reset
+ */
 export type NewPassword = {
     token: string;
     new_password: string;
 };
 
+/**
+ * Purpose: Schema for private user creation (bypasses SQLModel validation)
+ *
+ * Structure:
+ * email (str): input - User email
+ * password (str): input - Plain text password
+ * full_name (str): input - User display name
+ * is_verified (bool): input - Verification status (default False)
+ */
 export type PrivateUserCreate = {
     email: string;
     password: string;
@@ -52,16 +79,113 @@ export type PrivateUserCreate = {
     is_verified?: boolean;
 };
 
+/**
+ * Purpose: Schema for project creation
+ */
+export type ProjectCreate = {
+    name: string;
+    description?: (string | null);
+    status?: string;
+};
+
+/**
+ * Purpose: Project response schema with owner reference
+ */
+export type ProjectPublic = {
+    name: string;
+    description?: (string | null);
+    status?: string;
+    id: string;
+    owner_id: string;
+    created_at?: (string | null);
+};
+
+/**
+ * Purpose: Paginated project list response
+ */
+export type ProjectsPublic = {
+    data: Array<ProjectPublic>;
+    count: number;
+};
+
+/**
+ * Purpose: Schema for project update (all fields optional)
+ */
+export type ProjectUpdate = {
+    name?: (string | null);
+    description?: (string | null);
+    status?: (string | null);
+};
+
+/**
+ * Purpose: Paginated time entry list response
+ */
+export type TimeEntriesPublic = {
+    data: Array<TimeEntryPublic>;
+    count: number;
+};
+
+/**
+ * Purpose: Schema for time entry creation
+ */
+export type TimeEntryCreate = {
+    date: string;
+    hours: number;
+    description?: (string | null);
+    billable?: boolean;
+    project_id: string;
+};
+
+/**
+ * Purpose: TimeEntry response schema with owner and project references
+ */
+export type TimeEntryPublic = {
+    date: string;
+    hours: number;
+    description?: (string | null);
+    billable?: boolean;
+    project_id: string;
+    id: string;
+    owner_id: string;
+    created_at?: (string | null);
+};
+
+export type TimeEntrySummary = {
+    project_id: string;
+    project_name: string;
+    total_hours: number;
+};
+
+/**
+ * Purpose: Schema for time entry update (all fields optional)
+ */
+export type TimeEntryUpdate = {
+    date?: (string | null);
+    hours?: (number | null);
+    description?: (string | null);
+    billable?: boolean;
+    project_id?: (string | null);
+};
+
+/**
+ * Purpose: JWT access token response
+ */
 export type Token = {
     access_token: string;
     token_type?: string;
 };
 
+/**
+ * Purpose: Schema for authenticated password change
+ */
 export type UpdatePassword = {
     current_password: string;
     new_password: string;
 };
 
+/**
+ * Purpose: Schema for admin user creation (includes role flags from UserBase)
+ */
 export type UserCreate = {
     email: string;
     is_active?: boolean;
@@ -70,6 +194,9 @@ export type UserCreate = {
     password: string;
 };
 
+/**
+ * Purpose: User response schema (excludes hashed_password)
+ */
 export type UserPublic = {
     email: string;
     is_active?: boolean;
@@ -79,17 +206,26 @@ export type UserPublic = {
     created_at?: (string | null);
 };
 
+/**
+ * Purpose: Schema for public self-registration (no role flags)
+ */
 export type UserRegister = {
     email: string;
     password: string;
     full_name?: (string | null);
 };
 
+/**
+ * Purpose: Paginated user list response
+ */
 export type UsersPublic = {
     data: Array<UserPublic>;
     count: number;
 };
 
+/**
+ * Purpose: Schema for admin user update (all fields optional)
+ */
 export type UserUpdate = {
     email?: (string | null);
     is_active?: boolean;
@@ -98,6 +234,9 @@ export type UserUpdate = {
     password?: (string | null);
 };
 
+/**
+ * Purpose: Schema for self-profile update (name and email only)
+ */
 export type UserUpdateMe = {
     full_name?: (string | null);
     email?: (string | null);
@@ -176,6 +315,77 @@ export type PrivateCreateUserData = {
 };
 
 export type PrivateCreateUserResponse = (UserPublic);
+
+export type ProjectsReadProjectsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type ProjectsReadProjectsResponse = (ProjectsPublic);
+
+export type ProjectsCreateProjectData = {
+    requestBody: ProjectCreate;
+};
+
+export type ProjectsCreateProjectResponse = (ProjectPublic);
+
+export type ProjectsReadProjectData = {
+    id: string;
+};
+
+export type ProjectsReadProjectResponse = (ProjectPublic);
+
+export type ProjectsUpdateProjectData = {
+    id: string;
+    requestBody: ProjectUpdate;
+};
+
+export type ProjectsUpdateProjectResponse = (ProjectPublic);
+
+export type ProjectsDeleteProjectData = {
+    id: string;
+};
+
+export type ProjectsDeleteProjectResponse = (Message);
+
+export type TimeEntriesReadTimeEntriesSummaryData = {
+    endDate?: (string | null);
+    startDate?: (string | null);
+};
+
+export type TimeEntriesReadTimeEntriesSummaryResponse = (Array<TimeEntrySummary>);
+
+export type TimeEntriesReadTimeEntriesData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type TimeEntriesReadTimeEntriesResponse = (TimeEntriesPublic);
+
+export type TimeEntriesCreateTimeEntryData = {
+    requestBody: TimeEntryCreate;
+};
+
+export type TimeEntriesCreateTimeEntryResponse = (TimeEntryPublic);
+
+export type TimeEntriesReadTimeEntryData = {
+    id: string;
+};
+
+export type TimeEntriesReadTimeEntryResponse = (TimeEntryPublic);
+
+export type TimeEntriesUpdateTimeEntryData = {
+    id: string;
+    requestBody: TimeEntryUpdate;
+};
+
+export type TimeEntriesUpdateTimeEntryResponse = (TimeEntryPublic);
+
+export type TimeEntriesDeleteTimeEntryData = {
+    id: string;
+};
+
+export type TimeEntriesDeleteTimeEntryResponse = (Message);
 
 export type UsersReadUsersData = {
     limit?: number;

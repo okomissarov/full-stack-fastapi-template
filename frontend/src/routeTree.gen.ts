@@ -15,7 +15,10 @@ import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutTimeEntriesRouteImport } from './routes/_layout/time-entries'
+import { Route as LayoutTimeDashboardRouteImport } from './routes/_layout/time-dashboard'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as LayoutProjectsRouteImport } from './routes/_layout/projects'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 
@@ -48,9 +51,24 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutTimeEntriesRoute = LayoutTimeEntriesRouteImport.update({
+  id: '/time-entries',
+  path: '/time-entries',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutTimeDashboardRoute = LayoutTimeDashboardRouteImport.update({
+  id: '/time-dashboard',
+  path: '/time-dashboard',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutProjectsRoute = LayoutProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutItemsRoute = LayoutItemsRouteImport.update({
@@ -72,7 +90,10 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/items': typeof LayoutItemsRoute
+  '/projects': typeof LayoutProjectsRoute
   '/settings': typeof LayoutSettingsRoute
+  '/time-dashboard': typeof LayoutTimeDashboardRoute
+  '/time-entries': typeof LayoutTimeEntriesRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -81,7 +102,10 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/items': typeof LayoutItemsRoute
+  '/projects': typeof LayoutProjectsRoute
   '/settings': typeof LayoutSettingsRoute
+  '/time-dashboard': typeof LayoutTimeDashboardRoute
+  '/time-entries': typeof LayoutTimeEntriesRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -93,7 +117,10 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/items': typeof LayoutItemsRoute
+  '/_layout/projects': typeof LayoutProjectsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
+  '/_layout/time-dashboard': typeof LayoutTimeDashboardRoute
+  '/_layout/time-entries': typeof LayoutTimeEntriesRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
@@ -106,7 +133,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin'
     | '/items'
+    | '/projects'
     | '/settings'
+    | '/time-dashboard'
+    | '/time-entries'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -115,7 +145,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin'
     | '/items'
+    | '/projects'
     | '/settings'
+    | '/time-dashboard'
+    | '/time-entries'
     | '/'
   id:
     | '__root__'
@@ -126,7 +159,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_layout/admin'
     | '/_layout/items'
+    | '/_layout/projects'
     | '/_layout/settings'
+    | '/_layout/time-dashboard'
+    | '/_layout/time-entries'
     | '/_layout/'
   fileRoutesById: FileRoutesById
 }
@@ -182,11 +218,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/time-entries': {
+      id: '/_layout/time-entries'
+      path: '/time-entries'
+      fullPath: '/time-entries'
+      preLoaderRoute: typeof LayoutTimeEntriesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/time-dashboard': {
+      id: '/_layout/time-dashboard'
+      path: '/time-dashboard'
+      fullPath: '/time-dashboard'
+      preLoaderRoute: typeof LayoutTimeDashboardRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/settings': {
       id: '/_layout/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof LayoutSettingsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/projects': {
+      id: '/_layout/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof LayoutProjectsRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/items': {
@@ -209,14 +266,20 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
+  LayoutProjectsRoute: typeof LayoutProjectsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutTimeDashboardRoute: typeof LayoutTimeDashboardRoute
+  LayoutTimeEntriesRoute: typeof LayoutTimeEntriesRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutItemsRoute: LayoutItemsRoute,
+  LayoutProjectsRoute: LayoutProjectsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutTimeDashboardRoute: LayoutTimeDashboardRoute,
+  LayoutTimeEntriesRoute: LayoutTimeEntriesRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 

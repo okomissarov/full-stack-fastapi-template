@@ -8,7 +8,7 @@
  *     Used by: Authenticated layout shell
  */
 
-import { Briefcase, Home, Users } from "lucide-react"
+import { BarChart3, Briefcase, Clock, Home, Users } from "lucide-react"
 
 import { SidebarAppearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
@@ -25,6 +25,9 @@ import { User } from "./User"
 const baseItems: Item[] = [
   { icon: Home, title: "Dashboard", path: "/" },
   { icon: Briefcase, title: "Items", path: "/items" },
+  { icon: Briefcase, title: "Projects", path: "/projects" },
+  { icon: Clock, title: "Time Entries", path: "/time-entries" },
+  { icon: BarChart3, title: "Time Dashboard", path: "/time-dashboard" },
 ]
 
 /**

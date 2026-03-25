@@ -31,6 +31,8 @@ import { handleError } from "@/utils"
 
 /** Zod schema for recovery form: email only. */
 const formSchema = z.object({
+  email: z.string().email(),
+})
 
 type FormData = z.infer<typeof formSchema>
 
