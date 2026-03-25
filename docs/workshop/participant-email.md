@@ -114,15 +114,68 @@ git clone https://gitlab.dataart.com/da/dalf/aila-kiro-home.git
 
 ---
 
-## 5. Quick Verification Checklist
+## 5. Jira MCP Server (for reading JIRA stories)
+
+The workshop uses a Jira MCP server so agents can read JIRA epics and stories directly.
+
+### Install uv (package runner)
+
+macOS / Linux:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+Windows:
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+Verify: `uvx --version`
+
+### Generate JIRA Personal Access Token
+
+1. Go to https://support.dataart.com/secure/ViewProfile.jspa
+2. Click "Personal Access Tokens" in the left menu
+3. Click "Create token"
+4. Name it "kiro-workshop" and click "Create"
+5. Copy the token (you won't see it again)
+
+### Configure MCP
+
+Create or update `~/.kiro/settings/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "mcp-atlassian": {
+      "command": "uvx",
+      "args": ["mcp-atlassian"],
+      "env": {
+        "JIRA_URL": "https://support.dataart.com",
+        "JIRA_PERSONAL_TOKEN": "YOUR_TOKEN_HERE",
+        "JIRA_SSL_VERIFY": "false"
+      }
+    }
+  }
+}
+```
+
+Replace `YOUR_TOKEN_HERE` with your personal access token.
+
+### Verify
+
+Start Kiro and ask: "Read JIRA issue AWSP-114"
+
+---
+
+## 6. Quick Verification Checklist
 
 Run through this checklist to confirm everything is ready:
 
 - [ ] `python3 --version` → 3.10+
 - [ ] `node --version` → 18+
 - [ ] `git --version` → any
+- [ ] `uvx --version` → installed
 - [ ] `kiro-cli --version` → installed
 - [ ] `kiro-cli login` → authenticated
+- [ ] `~/.kiro/settings/mcp.json` → exists with JIRA token
 - [ ] `cd full-stack-fastapi-template && ls workspace.py` → file exists
 - [ ] `cd aila-kiro-home && ls AILA-SKILLS-BOOTSTRAP.md` → file exists
 - [ ] Can access JIRA AWSP-114 in browser
