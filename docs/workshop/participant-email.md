@@ -131,4 +131,6 @@ Run through this checklist to confirm everything is ready:
 
 If you run into any issues, reach out and we'll sort it out before the workshop.
 
+**Workshop agenda:** https://github.com/okomissarov/full-stack-fastapi-template/blob/master/docs/workshop/agenda.md
+
 See you there!
