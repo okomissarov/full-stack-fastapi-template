@@ -18,7 +18,7 @@ else:
     if alt.exists():
         sys.path.insert(0, str(alt))
 
-from aila_catalog_schema.kiro_workspace import KiroWorkspace, KiroPrompt, prompt_ref
+from aila_catalog_schema.kiro_workspace import KiroWorkspace, KiroPrompt, KiroCatalogSkill, prompt_ref
 from aila_catalog_schema.kiro_agent import KiroAgent
 
 workspace = KiroWorkspace(
@@ -49,7 +49,10 @@ workspace = KiroWorkspace(
         KiroPrompt(name="frontend-ts.md", description="Frontend agent system prompt"),
     ],
     steering=[],
-    skills=[],
+    skills=[
+        KiroCatalogSkill(name="generic-sdlc", description="Structured software development lifecycle from idea to implementation"),
+        KiroCatalogSkill(name="workspace-management", description="Kiro workspace lifecycle — define, generate, catalog, publish"),
+    ],
     skill_provider=False,
 )
 

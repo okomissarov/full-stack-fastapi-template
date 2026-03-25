@@ -7,7 +7,7 @@
 ## Quick Start — Copy & Paste This
 
 ```
-Set up full-stack-fastapi workspace from scratch. Clone repos: full-stack-fastapi-template, aila-catalog-schema. Create venv, install editable packages: aila-catalog-schema. Install deps: pandas, pyarrow, jira, pyyaml, gitpython. Install LSP: typescript-language-server, pyright. Run workspace.py generate, then WORKSPACE_SELFTEST.md to verify. Fix any failing tests before proceeding.
+Set up full-stack-fastapi workspace from scratch. Clone repos: full-stack-fastapi-template, aila-catalog-schema, skill-sdk-aila. Create venv, install editable packages: aila-catalog-schema, skill-sdk-aila. Install deps: pandas, pyarrow, jira, pyyaml, gitpython. Install LSP: typescript-language-server, pyright. Run workspace.py generate, then WORKSPACE_SELFTEST.md to verify. Fix any failing tests before proceeding.
 ```
 
 ---
@@ -18,6 +18,8 @@ Set up full-stack-fastapi workspace from scratch. Clone repos: full-stack-fastap
   This workspace
 - **aila-catalog-schema**: `git@gitlab.dataart.com:da/dalf/aila-catalog-schema.git` — `pip install -e .`
   Workspace types (KiroWorkspace, KiroAgent)
+- **skill-sdk-aila**: `git@gitlab.dataart.com:da/dalf/skill-sdk-aila.git` — `pip install -e .`
+  AILA Catalog SDK
 
 ---
 
@@ -25,7 +27,7 @@ Set up full-stack-fastapi workspace from scratch. Clone repos: full-stack-fastap
 
 ### 1. Clone all repos
 ### 2. Create venv: `python3 -m venv .venv && source .venv/bin/activate`
-### 3. Install SDKs: pip install -e /path/to/aila-catalog-schema
+### 3. Install SDKs: pip install -e /path/to/aila-catalog-schema && pip install -e /path/to/skill-sdk-aila
 ### 4. Install deps: `pip install pandas pyarrow jira python-dotenv pyyaml gitpython`
 ### 5. LSP: `npm install -g typescript-language-server typescript && pip install pyright`
 ### 6. Generate: `python3 workspace.py generate`

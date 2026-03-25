@@ -53,9 +53,10 @@ For deep type-level questions, delegate to these agents (via use_subagent):
 
 These agents load full KNOW.md references on demand via the SDK.
 
-## Workspace Skills (2)
+## Workspace Skills (3)
 
 - `aila-catalog-sdk` — AILA Catalog SDK — skill discovery, resource management, catalog operations
 - `workspace-management` — Kiro workspace lifecycle — define, generate, catalog, publish
+- `generic-sdlc` — Structured software development lifecycle from idea to implementation
 
 See `references/skills.json` for full catalog references.

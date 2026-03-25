@@ -43,6 +43,7 @@ Delegate to any agent listed above.
 
 - `aila-catalog-sdk` — AILA Catalog SDK — skill discovery, resource management, catalog operations
 - `workspace-management` — Kiro workspace lifecycle — define, generate, catalog, publish
+- `generic-sdlc` — Structured software development lifecycle from idea to implementation
 
 ### Level 3: AILA Catalog
 

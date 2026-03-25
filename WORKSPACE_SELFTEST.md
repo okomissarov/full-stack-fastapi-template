@@ -20,6 +20,9 @@ List all available agents with their descriptions.
 What skills are available in this workspace?
 ```
 
+**Expected:** 2 skill(s):
+- `name='generic-sdlc' description='Structured software development lifecycle from idea to implementation' provider_name='aws-cloud-provider'`
+- `name='workspace-management' description='Kiro workspace lifecycle — define, generate, catalog, publish' provider_name='aws-cloud-provider'`
 
 ---
 

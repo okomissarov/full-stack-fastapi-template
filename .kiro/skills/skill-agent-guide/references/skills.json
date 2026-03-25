@@ -7,6 +7,11 @@
   {
     "name": "workspace-management",
     "description": "Kiro workspace lifecycle \u2014 define, generate, catalog, publish",
-    "provider_name": "skill-library-aila"
+    "provider_name": "aws-cloud-provider"
+  },
+  {
+    "name": "generic-sdlc",
+    "description": "Structured software development lifecycle from idea to implementation",
+    "provider_name": "aws-cloud-provider"
   }
 ]

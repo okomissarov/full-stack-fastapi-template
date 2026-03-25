@@ -104,10 +104,11 @@ full-stack-fastapi/
 
 ---
 
-## Skills (2)
+## Skills (3)
 
 - `aila-catalog-sdk` — AILA Catalog SDK — skill discovery, resource management, catalog operations
 - `workspace-management` — Kiro workspace lifecycle — define, generate, catalog, publish
+- `generic-sdlc` — Structured software development lifecycle from idea to implementation
 
 ---
 
